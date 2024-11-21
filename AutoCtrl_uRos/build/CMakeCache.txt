@@ -14,6 +14,15 @@
 # EXTERNAL cache entries
 ########################
 
+//Value Computed by CMake
+AckermannDrive_BINARY_DIR:STATIC=/Users/charliewadds/capstoneCode/AutoCtrl_uRos/AutoCtrl_uRos/build
+
+//Value Computed by CMake
+AckermannDrive_IS_TOP_LEVEL:STATIC=ON
+
+//Value Computed by CMake
+AckermannDrive_SOURCE_DIR:STATIC=/Users/charliewadds/capstoneCode/AutoCtrl_uRos/AutoCtrl_uRos/extra_packages/aav_drive_msg
+
 //Path to a program.
 CMAKE_ADDR2LINE:FILEPATH=CMAKE_ADDR2LINE-NOTFOUND
 
