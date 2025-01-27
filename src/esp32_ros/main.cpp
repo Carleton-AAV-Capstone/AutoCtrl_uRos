@@ -4,6 +4,7 @@
 #include "./hardware_fns/hardware_config.h"
 #include "./uRos_fns/uRos_fns.h"
 #include "./SteeringBraking/Braking.h"
+#include "./SteeringBraking/Steering.h"
 bool ackermann_recv;
 // Target setpoint and integral value
 int setpoint = 0;
@@ -16,7 +17,7 @@ unsigned long lastTime = 0;
 
 
 // Parameters that can be changed on the fly for steering
-int P =  50;
+int P =  70;
 float I = 0;
 int D = 0;
 int integralLimit = 320;
@@ -56,12 +57,12 @@ void setup() {
     steer_vals.power = 0;
     steer_vals.prev_error = 0;
     steer_vals.lastTime = 0;
-    steer_vals.P = 140;
-    steer_vals.I = 0.5;
+    steer_vals.P = 70;
+    steer_vals.I = 0;
     steer_vals.D = 0;
-    steer_vals.integralLimit = 1000;
+    steer_vals.integralLimit = 320;
     steer_vals.positionDeadzone = 1;
-    steer_vals.errorLimit = 2048;
+    steer_vals.errorLimit = 100;
 
     //this should be a constructor or basically anything but this
     brake_vals.setpoint = 0;
@@ -96,7 +97,7 @@ void setup() {
     digitalWrite(GREEN_LED_PIN, LOW);
     xTaskCreatePinnedToCore(
       microROS_Task,          // Task function
-      "Task1",        // Name of task
+      "microRos_Task",        // Name of task
       4096,           // Stack size in words
       NULL,           // Task input parameter
       1,              // Priority of the task
@@ -105,7 +106,15 @@ void setup() {
 
     xTaskCreatePinnedToCore(
      brakingPID_task,          // Task function
-    "Task2",        // Name of task
+    "brakingPID",        // Name of task
+    4096,           // Stack size in words
+    NULL,           // Task input parameter
+    1,              // Priority of the task
+    &TaskCore1,     // Task handle
+    1);
+    xTaskCreatePinnedToCore(
+     steeringPID_task,          // Task function
+    "steeringPID",        // Name of task
     4096,           // Stack size in words
     NULL,           // Task input parameter
     1,              // Priority of the task

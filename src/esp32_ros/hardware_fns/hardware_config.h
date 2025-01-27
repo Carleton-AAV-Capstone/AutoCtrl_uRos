@@ -1,4 +1,4 @@
-
+#include "Arduino.h"
 
 #undef TRANSPORT_SERIAL
 #define TRANSPORT_WIFI
