@@ -1,14 +1,14 @@
-
+#include "../hardware_fns/hardware_config.h"
 #ifndef MCTRL_H
 #define MCTRL_H
-#include "../hardware_fns/hardware_config.h"
+
 
 
 #define STEER_ID 0x01
 #define BRAKE_ID 0x02
 
 
-SemaphoreHandle_t serialMutex = xSemaphoreCreateMutex();
+
 
 
 

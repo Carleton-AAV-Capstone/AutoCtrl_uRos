@@ -28,14 +28,11 @@
 
 
 
-/*_____________________________________MACROS_____________________________________________________
-
-
-
-
-
-*/
-
+/*_____________________________________MACROS_____________________________________________________*/
+#define uROS_IP (192, 168, 1, 147)
+#define uROS_PORT 8888
+#define NET_SSID "AAVwifi"
+#define NET_PASS "aav@2023"
 
 typedef struct uRos_struct_s{
     rcl_node_t node;
@@ -47,7 +44,7 @@ typedef struct uRos_struct_s{
     rclc_executor_t executor_2;
 
 }uRos_s;
-int uRos_init_wireless_node_ackermann(uRos_s *uRosStruct, rclc_subscription_callback_t subscription_callback, ackermann_msgs__msg__AckermannDrive *msg, char *ssid, char *pass, char *ip, int port, char *nodeName, char *topicName);
+int uRos_init_wireless_node_ackermann(uRos_s *uRosStruct, rclc_subscription_callback_t subscription_callback, ackermann_msgs__msg__AckermannDrive *msg, char *ssid, char *pass, int port, char *nodeName, char *topicName);
 int uRos_init_serial_node_ackermann(uRos_s *uRosStruct, rclc_subscription_callback_t subscription_callback, ackermann_msgs__msg__AckermannDrive *msg, char *nodeName, char *topicName);
 void microROS_Task(void* parameter);
 void microROS_Task_joy(void* parameter);

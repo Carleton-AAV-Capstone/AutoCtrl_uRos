@@ -2,7 +2,7 @@
 #include "esp_mac.h"
 
 
-
+SemaphoreHandle_t serialMutex = xSemaphoreCreateMutex();
 int readByte()
 {
   char c;
