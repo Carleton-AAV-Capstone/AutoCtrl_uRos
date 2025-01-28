@@ -119,7 +119,7 @@ void setup() {
     4096,           // Stack size in words
     NULL,           // Task input parameter
     1,              // Priority of the task
-    &TaskCore1,     // Task handle
+    &TaskCore0,     // Task handle
     1);
   
   

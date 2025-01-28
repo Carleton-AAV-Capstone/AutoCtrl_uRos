@@ -21,11 +21,11 @@ extern PID_vals brake_vals;
 void brakingPID_task(void* parameter) {
   //USER_SERIAL.println("startBrakeTask");
   TickType_t xLastWakeTime = xTaskGetTickCount();
-  const TickType_t xFrequency =  10 / portTICK_PERIOD_MS; // 500 ms interval
+  const TickType_t xFrequency =  10 / portTICK_PERIOD_MS; 
   while (true) {
     //USER_SERIAL.println("runBrakeTask");
 
-  float brakePos = getA1_scaled(BRAKE_ID);
+  float brakePos = getA2_scaled(BRAKE_ID);
   
   // Get the time elapsed
   unsigned long currentTime = millis();

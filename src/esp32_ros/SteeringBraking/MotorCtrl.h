@@ -8,6 +8,9 @@
 #define BRAKE_ID 0x02
 
 
+SemaphoreHandle_t serialMutex = xSemaphoreCreateMutex();
+
+
 
 typedef struct pid_s{
     int setpoint;
@@ -34,6 +37,7 @@ void exitSafeStart(int deviceNum);
 void setMotorSpeed(int speed, int deviceNum);
 
 float getA1_scaled(int deviceNum);
+float getA2_scaled(int deviceNum);
 
 void motor_controller_setup();
 

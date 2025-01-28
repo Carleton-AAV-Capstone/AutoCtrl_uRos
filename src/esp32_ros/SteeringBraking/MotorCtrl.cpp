@@ -1,4 +1,7 @@
 #include "MotorCtrl.h"
+#include "esp_mac.h"
+
+
 
 int readByte()
 {
@@ -36,45 +39,70 @@ void setMotorSpeed(int speed, int deviceNum)
 {
   //USER_SERIAL.println("setMotorSpeed");
   // Handle negative speed (reverse)
-  CTRL_SERIAL.write(0xAA);
-  CTRL_SERIAL.write(deviceNum);
-  if (speed < 0)
-  {
-    CTRL_SERIAL.write(0x06);  // Motor reverse command
-    speed = -speed;       // Convert speed to positive
-  }
-  else
-  {
-    CTRL_SERIAL.write(0x05);  // Motor forward command
-  }
 
-  // Send the speed (two bytes, split between 5 and 7 bits)
-  CTRL_SERIAL.write(speed & 0x1F);      // Send the least significant 5 bits
-  CTRL_SERIAL.write((speed >> 5) & 0x7F);  // Send the most significant 7 bits
+  if (xSemaphoreTake(serialMutex, portMAX_DELAY)) {
+    CTRL_SERIAL.write(0xAA);
+    CTRL_SERIAL.write(deviceNum);
+    if (speed < 0)
+    {
+      CTRL_SERIAL.write(0x06);  // Motor reverse command
+      speed = -speed;       // Convert speed to positive
+    }
+    else
+    {
+      CTRL_SERIAL.write(0x05);  // Motor forward command
+    }
+
+    // Send the speed (two bytes, split between 5 and 7 bits)
+    CTRL_SERIAL.write(speed & 0x1F);      // Send the least significant 5 bits
+    CTRL_SERIAL.write((speed >> 5) & 0x7F);  // Send the most significant 7 bits
+    xSemaphoreGive(serialMutex);
+  }
 }
 
 // Function to get a scaled sensor value from command A1
 float getA1_scaled(int deviceNum) {
-  CTRL_SERIAL.write(0xAA);  // Command A1
-  CTRL_SERIAL.write(deviceNum);
-  CTRL_SERIAL.write(0x21);    // Send the scaling factor
-  if(deviceNum == STEER_ID){
-    CTRL_SERIAL.write(14);
-  }else if(deviceNum == BRAKE_ID){
-    CTRL_SERIAL.write(18);
-  }
-  char b1 = readByte();     // Low byte
-  char b2 = readByte();     // High byte (contains the sign)
 
-//   USER_SERIAL.print(b1);
-//   USER_SERIAL.print("  ");
-//   USER_SERIAL.println(b2);
+  char b1;
+  char b2;
+  if (xSemaphoreTake(serialMutex, portMAX_DELAY)) {
+    CTRL_SERIAL.write(0xAA); 
+    CTRL_SERIAL.write(deviceNum);
+    CTRL_SERIAL.write(0x21);  
+    CTRL_SERIAL.write(14);
+    
+    b1 = readByte();     // Low byte
+    b2 = readByte();     // High byte (contains the sign)
+    xSemaphoreGive(serialMutex);
+  }
 
   // Combine bytes into a signed 16-bit integer
   int16_t number = (int16_t)((uint8_t)b1 | ((uint8_t)b2 << 8));
-  if(number/32 > 110 || number/32 < -10){
-    USER_SERIAL.println("A1_READ_ERROR");
+ 
+  // Scale and return the result
+  return (float)number / 32.0;
+}
+
+// Function to get a scaled sensor value from command A2
+float getA2_scaled(int deviceNum) {
+
+  char b1;
+  char b2;
+  if (xSemaphoreTake(serialMutex, portMAX_DELAY)) {
+    CTRL_SERIAL.write(0xAA); 
+    CTRL_SERIAL.write(deviceNum);
+    CTRL_SERIAL.write(0x21);    
+      
+    CTRL_SERIAL.write(18);
+    
+    b1 = readByte();     // Low byte
+    b2 = readByte();     // High byte (contains the sign)
+    xSemaphoreGive(serialMutex);
   }
+
+  // Combine bytes into a signed 16-bit integer
+  int16_t number = (int16_t)((uint8_t)b1 | ((uint8_t)b2 << 8));
+ 
   // Scale and return the result
   return (float)number / 32.0;
 }
