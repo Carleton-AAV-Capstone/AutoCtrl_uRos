@@ -102,7 +102,7 @@ void setup() {
       NULL,           // Task input parameter
       1,              // Priority of the task
       &TaskCore2,     // Task handle
-      1);
+      0);
 
     xTaskCreatePinnedToCore(
      brakingPID_task,          // Task function
