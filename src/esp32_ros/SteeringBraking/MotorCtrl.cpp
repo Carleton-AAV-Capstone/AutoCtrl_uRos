@@ -18,7 +18,7 @@ int sendCommand(uint8_t cmd, uint8_t deviceNum, uint16_t value){
     CTRL_SERIAL.write(deviceNum);
     // Send the speed (two bytes, split between 5 and 7 bits)
     CTRL_SERIAL.write(value & 0x1F);      // Send the least significant 5 bits
-     CTRL_SERIAL.write((value >> 5) & 0x7F);  // Send the most significant 7 bits
+    CTRL_SERIAL.write((value >> 5) & 0x7F);  // Send the most significant 7 bits
 }
 
 // Function to exit safe mode and enable motor movement
@@ -40,12 +40,12 @@ void setMotorSpeed(int speed, int deviceNum)
   CTRL_SERIAL.write(deviceNum);
   if (speed < 0)
   {
-    CTRL_SERIAL.write(0x86);  // Motor reverse command
+    CTRL_SERIAL.write(0x06);  // Motor reverse command
     speed = -speed;       // Convert speed to positive
   }
   else
   {
-    CTRL_SERIAL.write(0x85);  // Motor forward command
+    CTRL_SERIAL.write(0x05);  // Motor forward command
   }
 
   // Send the speed (two bytes, split between 5 and 7 bits)
@@ -55,9 +55,14 @@ void setMotorSpeed(int speed, int deviceNum)
 
 // Function to get a scaled sensor value from command A1
 float getA1_scaled(int deviceNum) {
-  CTRL_SERIAL.write(0xA1);  // Command A1
+  CTRL_SERIAL.write(0xAA);  // Command A1
   CTRL_SERIAL.write(deviceNum);
-  CTRL_SERIAL.write(14);    // Send the scaling factor
+  CTRL_SERIAL.write(0x21);    // Send the scaling factor
+  if(deviceNum == STEER_ID){
+    CTRL_SERIAL.write(14);
+  }else if(deviceNum == BRAKE_ID){
+    CTRL_SERIAL.write(18);
+  }
   char b1 = readByte();     // Low byte
   char b2 = readByte();     // High byte (contains the sign)
 

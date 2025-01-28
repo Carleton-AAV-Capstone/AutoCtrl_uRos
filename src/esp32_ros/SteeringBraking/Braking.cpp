@@ -69,7 +69,7 @@ void brakingPID_task(void* parameter) {
   // Constrain the power within the range of the 
   brake_vals.power = constrain(brake_vals.power, -brake_vals.maxPower, brake_vals.maxPower);
   // Set the motor speed based on the calculated power
-  setMotorSpeed(-brake_vals.power, BRAKE_ID);
+  setMotorSpeed(brake_vals.power, BRAKE_ID);
 
   // Output the current sensor value
   USER_SERIAL.print("Pos:");

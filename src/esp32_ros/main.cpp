@@ -72,10 +72,10 @@ void setup() {
     brake_vals.power = 0;
     brake_vals.prev_error = 0;
     brake_vals.lastTime = 0;
-    brake_vals.P = 140;
+    brake_vals.P = 70;
     brake_vals.I = 0.5;
     brake_vals.D = 0;
-    brake_vals.integralLimit = 1000;
+    brake_vals.integralLimit = 320;
     brake_vals.positionDeadzone = 1;
     brake_vals.errorLimit = 2048;
 
@@ -112,6 +112,7 @@ void setup() {
     1,              // Priority of the task
     &TaskCore1,     // Task handle
     1);
+
     xTaskCreatePinnedToCore(
      steeringPID_task,          // Task function
     "steeringPID",        // Name of task
