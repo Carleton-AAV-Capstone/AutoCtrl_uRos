@@ -9,8 +9,8 @@ extern bool ackermann_recv;
 int uRos_init_wireless_node_ackermann(uRos_s *uRosStruct, rclc_subscription_callback_t subscription_callback, ackermann_msgs__msg__AckermannDrive *msg, char *ssid, char *pass, int port, char *nodeName, char *topicName){
     rcl_ret_t status;
     //192.168.1.126
-    IPAddress local_IP(uROS_IP);
-    //IPAddress local_IP(192, 168, 2, 58);
+    //IPAddress local_IP(uROS_IP);
+    IPAddress local_IP(192, 168, 1, 147);
 
     String bssid = "";
     while(!WiFi.isConnected()) {
