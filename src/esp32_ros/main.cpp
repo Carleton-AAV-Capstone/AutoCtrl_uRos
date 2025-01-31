@@ -81,7 +81,7 @@ void setup() {
 
     motor_controller_setup();
     USER_SERIAL.begin(115200);
-
+    //ROS_SERIAL.begin(115200, RX_PIN_1, TX_PIN_1);
     hardware_setup();
 
 

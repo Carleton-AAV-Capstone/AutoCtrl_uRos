@@ -72,26 +72,15 @@ void brakingPID_task(void* parameter) {
   setMotorSpeed(brake_vals.power, BRAKE_ID);
 
   // Output the current sensor value
-  USER_SERIAL.print("Pos:");
-  USER_SERIAL.print(brakePos);
-
-  USER_SERIAL.print(",propval:");
-  USER_SERIAL.print(propval);
-  
-  USER_SERIAL.print(",ival:");
-  USER_SERIAL.print(ival);
-
-  USER_SERIAL.print(",error:");
-  USER_SERIAL.print(error);
-  // Set point
-  USER_SERIAL.print(",Setpoint:");
-  USER_SERIAL.print(brake_vals.setpoint);
-  // Print the real power value
-  USER_SERIAL.print(",RealPower:");
-  USER_SERIAL.print(brake_vals.real_power);
-  // Output the calculated motor power
-  USER_SERIAL.print(",Power:");
-  USER_SERIAL.println(brake_vals.power);
+  USER_SERIAL.println("BRAKING\n-----------------------------");
+  USER_SERIAL.print("Pos:"); USER_SERIAL.print(brakePos);
+  USER_SERIAL.print(", PropVal:"); USER_SERIAL.print(propval);
+  USER_SERIAL.print(", IVal:"); USER_SERIAL.print(ival);
+  USER_SERIAL.print(", Error:"); USER_SERIAL.print(error);
+  USER_SERIAL.print(", Setpoint:"); USER_SERIAL.print(brake_vals.setpoint);
+  USER_SERIAL.print(", RealPower:"); USER_SERIAL.print(brake_vals.real_power);
+  USER_SERIAL.print(", Power:"); USER_SERIAL.println(brake_vals.power);
+  USER_SERIAL.println("____________________________");
   vTaskDelayUntil(&xLastWakeTime, xFrequency); // Wait until next cycle  
     }
 }

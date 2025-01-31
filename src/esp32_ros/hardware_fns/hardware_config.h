@@ -1,7 +1,7 @@
 #include "Arduino.h"
 
-#undef TRANSPORT_SERIAL
-#define TRANSPORT_WIFI
+#define TRANSPORT_SERIAL
+#undef TRANSPORT_WIFI
 #ifndef HARDWARE_CONFIG_H
 #define HARDWARE_CONFIG_H
 
@@ -31,8 +31,11 @@
 #define USER_SERIAL Serial
 #define CTRL_SERIAL Serial2
 
-#define RX_PIN_1 5
-#define TX_PIN_1 4
+#define RX_PIN_1 4
+#define TX_PIN_1 5
+
+//#define RX_PIN_1 3
+//#define TX_PIN_1 1
 
 #define TX_PIN 27
 #define RX_PIN 26
