@@ -58,15 +58,15 @@ void steeringPID_task(void* parameter) {
         setMotorSpeed(-steer_vals.power, STEER_ID);
 
         // Debugging output
-        USER_SERIAL.println("STEERING\n-----------------------------");
-        USER_SERIAL.print("Pos:"); USER_SERIAL.print(steerPos);
-        USER_SERIAL.print(", PropVal:"); USER_SERIAL.print(propval);
-        USER_SERIAL.print(", IVal:"); USER_SERIAL.print(ival);
-        USER_SERIAL.print(", Error:"); USER_SERIAL.print(error);
-        USER_SERIAL.print(", Setpoint:"); USER_SERIAL.print(steer_vals.setpoint);
-        USER_SERIAL.print(", RealPower:"); USER_SERIAL.print(steer_vals.real_power);
-        USER_SERIAL.print(", Power:"); USER_SERIAL.println(steer_vals.power);
-        USER_SERIAL.println("____________________________");
+        // USER_SERIAL.println("STEERING\n-----------------------------");
+        // USER_SERIAL.print("Pos:"); USER_SERIAL.print(steerPos);
+        // USER_SERIAL.print(", PropVal:"); USER_SERIAL.print(propval);
+        // USER_SERIAL.print(", IVal:"); USER_SERIAL.print(ival);
+        // USER_SERIAL.print(", Error:"); USER_SERIAL.print(error);
+        // USER_SERIAL.print(", Setpoint:"); USER_SERIAL.print(steer_vals.setpoint);
+        // USER_SERIAL.print(", RealPower:"); USER_SERIAL.print(steer_vals.real_power);
+        // USER_SERIAL.print(", Power:"); USER_SERIAL.println(steer_vals.power);
+        // USER_SERIAL.println("____________________________");
 
         // Delay to maintain the task's periodic execution
         vTaskDelayUntil(&xLastWakeTime, xFrequency);

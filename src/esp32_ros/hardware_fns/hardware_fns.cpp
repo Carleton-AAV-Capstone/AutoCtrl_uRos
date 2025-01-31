@@ -14,6 +14,11 @@ void hardware_setup(){
     digitalWrite(RED_LED_PIN, HIGH);
     digitalWrite(GREEN_LED_PIN, HIGH);
 
+    pinMode(USE_RC, INPUT);
+    pinMode(REV_EN, INPUT);
+    pinMode(THR_RC, INPUT);
+    pinMode(STR_RC, INPUT);
+
     pinMode(LED_PIN, OUTPUT);
     pinMode(DIR_PIN, OUTPUT);
 
@@ -42,7 +47,7 @@ void hardware_setup(){
 // Function to read a channel and map its value to a given range
 int readChannel(int channelInput, int minLimit, int maxLimit, int defaultValue) {
     int ch = pulseIn(channelInput, HIGH, 30000); // Read PWM signal
-    if (ch < 100) return defaultValue; // Default value if signal is invalid
+    if (ch < 1000) return defaultValue; // Default value if signal is invalid
     return map(ch, 1000, 2000, minLimit, maxLimit);
 }
 

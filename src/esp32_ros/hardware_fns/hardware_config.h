@@ -10,7 +10,8 @@
 //22,0,34,35
 
 //from motor controllers back: 35, 34, 0, 23: steering, throttle rev_en, RC_EN
-#define USE_RC 23
+
+#define USE_RC 23//make this a pulldown!!
 #define REV_EN 0
 #define THR_RC 34
 #define STR_RC 35
