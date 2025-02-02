@@ -95,6 +95,7 @@ void setup() {
     uRos_init_serial_node_ackermann(&testSetup, &throttle_callback_ackermann, &msg_ackermann, "micro_ros_arduino_wifi_node_car", "/driveData");
 #endif
     digitalWrite(GREEN_LED_PIN, LOW);
+    
     xTaskCreatePinnedToCore(
       microROS_Task,          // Task function
       "microRos_Task",        // Name of task
@@ -124,19 +125,6 @@ void setup() {
   
   
 
-
-  //I know I am not supposed to commit passwords but it is behind a vpn
-  //set_microros_wifi_transports("BELL310", "376F57AF1739", "192.168.2.58", 8888);
-  // uRos_init_wireless_node_int32_2(&testSetup, &braking_callback, &throttle_callback, &msg_int32, &msg_int32_2,
-  //                           "AAVwifi", "aav@2023", "192.168.1.126", 8888, "micro_ros_arduino_wifi_node_car", "/brake");
-
-
-//   uRos_init_wireless_node_drive(&testSetup, &throttle_callback_Drive, &msg_drive,
-//                             "AAVwifi", "aav@2023", "192.168.1.126", 8887, "micro_ros_arduino_wifi_node_car", "/driveData");
-
-
-//   // uRos_init_wireless_node_int32(&testSetup, &throttle_callback, &msg_int32, "BELL310", "376F57AF1739", "192.168.2.58", 8888, "micro_ros_arduino_wifi_node_car", "/brake" );
-  // Serial.print("init");
 
 
 

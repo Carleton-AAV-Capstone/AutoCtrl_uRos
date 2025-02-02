@@ -14,7 +14,7 @@ void hardware_setup(){
     digitalWrite(RED_LED_PIN, HIGH);
     digitalWrite(GREEN_LED_PIN, HIGH);
 
-    pinMode(USE_RC, INPUT);
+    pinMode(USE_RC, INPUT_PULLUP);
     pinMode(REV_EN, INPUT);
     pinMode(THR_RC, INPUT);
     pinMode(STR_RC, INPUT);

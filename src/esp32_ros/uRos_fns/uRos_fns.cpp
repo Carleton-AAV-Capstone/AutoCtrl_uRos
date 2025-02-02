@@ -4,6 +4,9 @@
 extern rcl_node_t node;
 extern uRos_s testSetup;
 extern bool ackermann_recv;
+#include "../hardware_fns/hardware_fns.h"
+#include "../AAV_fns/AAV_fns.h"
+#include "../Control_Config.h"
 
 #ifdef TRANSPORT_WIFI
 int uRos_init_wireless_node_ackermann(uRos_s *uRosStruct, rclc_subscription_callback_t subscription_callback, ackermann_msgs__msg__AckermannDrive *msg, char *ssid, char *pass, int port, char *nodeName, char *topicName){
@@ -136,12 +139,6 @@ int uRos_init_wireless_node_ackermann(uRos_s *uRosStruct, rclc_subscription_call
 #ifdef TRANSPORT_SERIAL
 int uRos_init_serial_node_ackermann(uRos_s *uRosStruct, rclc_subscription_callback_t subscription_callback, ackermann_msgs__msg__AckermannDrive *msg, char *nodeName, char *topicName){
     rcl_ret_t status;
-    //192.168.1.126
-    //IPAddress local_IP(192, 168, 1, 147);
-    //IPAddress local_IP(192, 168, 2, 58);
-
-    //Serial1.begin(115200, RX_PIN_1, TX_PIN_1);
-    //pinMode(RX_PIN_1, INPUT_PULLUP);
     ROS_SERIAL.begin(115200, SERIAL_8N1, RX_PIN_1, TX_PIN_1);
     set_microros_serial_transports(ROS_SERIAL);
 
@@ -252,38 +249,33 @@ int uRos_init_serial_node_ackermann(uRos_s *uRosStruct, rclc_subscription_callba
 extern int setpoint;
 
 void microROS_Task(void* parameter) {
-    pinMode(32, INPUT);
+    pinMode(DRIVER_ERROR_PIN, INPUT);
   TickType_t xLastWakeTime = xTaskGetTickCount();
-  const TickType_t xFrequency = 10/ portTICK_PERIOD_MS; // 500 ms interval
+  const TickType_t xFrequency = uROS_TASK_DELAY / portTICK_PERIOD_MS;
   //dac.setVoltage(1, false);
     rcl_ret_t status;
     while (true) {
         //USER_SERIAL.println("braketask");
 
+        if(!readSwitch(USE_RC, false)){
+            status = rclc_executor_spin_some(&testSetup.executor, RCL_MS_TO_NS(5));
+            
 
-        status = rclc_executor_spin_some(&testSetup.executor, RCL_MS_TO_NS(5));
-        vTaskDelayUntil(&xLastWakeTime, xFrequency); // Wait until next cycle
+
+            if(digitalRead(DRIVER_ERROR_PIN)){
+                USER_SERIAL.println("DRIVER ERROR");
+            }
     
-
-        if(digitalRead(32)){
-            USER_SERIAL.println("DRIVER ERROR");
-            digitalWrite(2, !digitalRead(2));
-        }else{
-            digitalWrite(2, LOW);
+        } else{
+            RC_Control();
         }
+        vTaskDelayUntil(&xLastWakeTime, xFrequency); // Wait until next cycle
     }
-
 
 
 }
 
 
 
-// void microROS_Task_joy(void* parameter) {
-//     while (true) {
-//         rclc_executor_spin_some(&testSetup.executor, RCL_MS_TO_NS(100));
-//         vTaskDelay(100 / portTICK_PERIOD_MS); // Task delay
-//     }
-// }
 
 

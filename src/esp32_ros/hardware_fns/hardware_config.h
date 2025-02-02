@@ -16,6 +16,7 @@
 #define THR_RC 34
 #define STR_RC 35
 
+#define DRIVER_ERROR_PIN 32
 
 #define DIR_PIN 33
 #define LED_PIN 2

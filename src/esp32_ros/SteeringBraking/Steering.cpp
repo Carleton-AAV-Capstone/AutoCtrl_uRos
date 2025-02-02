@@ -7,7 +7,7 @@ extern PID_vals steer_vals;
 void steeringPID_task(void* parameter) {
     // Initialize the wake time for periodic task execution
     TickType_t xLastWakeTime = xTaskGetTickCount();
-    const TickType_t xFrequency = 10 / portTICK_PERIOD_MS; // Task runs every 10 ms
+    const TickType_t xFrequency = STR_PID_TASK_DELAY / portTICK_PERIOD_MS; // Task runs every 10 ms
 
     while (true) {
         // Get the current steering position from the sensor
