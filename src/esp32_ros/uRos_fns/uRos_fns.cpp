@@ -256,19 +256,23 @@ void microROS_Task(void* parameter) {
     rcl_ret_t status;
     while (true) {
         //USER_SERIAL.println("braketask");
+        
 
-        if(!readSwitch(USE_RC, false)){
+        bool rc = !readSwitch(USE_RC, false);
+        delay(1);
+        if(!readSwitch(USE_RC, false) && rc){
+            USER_SERIAL.println("uROS TASK");
             status = rclc_executor_spin_some(&testSetup.executor, RCL_MS_TO_NS(5));
             
-
-
-            if(digitalRead(DRIVER_ERROR_PIN)){
-                USER_SERIAL.println("DRIVER ERROR");
-            }
-    
         } else{
+
+            USER_SERIAL.println("RC TASK");
             RC_Control();
         }
+
+        if(digitalRead(DRIVER_ERROR_PIN)){
+                USER_SERIAL.println("DRIVER ERROR");
+            }
         vTaskDelayUntil(&xLastWakeTime, xFrequency); // Wait until next cycle
     }
 

@@ -21,8 +21,7 @@ extern PID_vals steer_vals;
 void throttle_callback_ackermann(const void * msgin) {
     const ackermann_msgs__msg__AckermannDrive * msg = (const ackermann_msgs__msg__AckermannDrive *)msgin;
     
-    // Debugging: Print RC switch status
-    USER_SERIAL.print(readSwitch(USE_RC, false));
+    
     
     // Indicate message reception by setting pin 2 high
     digitalWrite(LED_PIN, HIGH);
@@ -44,18 +43,21 @@ void throttle_callback_ackermann(const void * msgin) {
       }
       
       // Map steering angle from input range to control range
+      USER_SERIAL.print("steer_angle: ");
       USER_SERIAL.println(msg->steering_angle);
       steer_vals.setpoint = (int) map((long) msg->steering_angle, STEER_READ_MIN, STEER_READ_MAX, 100, 0);
       // Apply control logic
       if (!dir) { // Moving forward
+        USER_SERIAL.print("ACCEL_SETPOINT: ");
+        USER_SERIAL.println(accelMag);
         dac.setVoltage((uint16_t) accelMag, false);
         brake_vals.setpoint = 0;
       } else { // Applying braking force
         USER_SERIAL.print("BRAKING_SETPOINT: ");
-        
         dac.setVoltage((uint16_t) 0, false);
         brake_vals.setpoint = (int) map((long) accelMag, 0, ACCEL_READ_MIN, 0, 100) * -1;
         USER_SERIAL.println(brake_vals.setpoint);
+        
       }
         
       
@@ -91,8 +93,19 @@ void RC_Control(){
   }
 
   // Debugging output
-  USER_SERIAL.print("USING RC: ");
+  USER_SERIAL.print("ACCEL MAG: ");
   USER_SERIAL.println(accelMag);
-
+  if (!dir) { // Moving forward
+    USER_SERIAL.println("FORWARD");
+    dac.setVoltage((uint16_t) accelMag, false);
+    brake_vals.setpoint = 0;
+  } else { // Applying braking force
+    USER_SERIAL.print("I2C_status");    
+    USER_SERIAL.println(dac.setVoltage((uint16_t) 0, false));
+    USER_SERIAL.print("BRAKING_SETPOINT: ");
+    
+    brake_vals.setpoint = (int) map((long) accelMag, 0, ACCEL_READ_MIN, 0, 100) * -1;
+    USER_SERIAL.println(brake_vals.setpoint);
+  }
   digitalWrite(LED_PIN, LOW);
 }

@@ -1,9 +1,9 @@
 
 
 
-#define STEER_READ_MAX 3200
-#define STEER_READ_MIN -3200
-#define STEER_READ_DEFAULT 0
+#define STEER_READ_MAX 100//double check this
+#define STEER_READ_MIN 0
+#define STEER_READ_DEFAULT 50
 
 
 #define ACCEL_READ_MAX 2000
