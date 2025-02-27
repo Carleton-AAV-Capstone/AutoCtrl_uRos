@@ -64,9 +64,7 @@ void setup() {
 
     allocator = rcl_get_default_allocator();
 
-    // Create ROS node and publishers
-    RCCHECK(rclc_support_init(&support, 0, NULL, &allocator));
-    RCCHECK(rclc_node_init_default(&node, "micro_ros_esp32_rc_node", "", &support));
+
 
 //    // Create publisher for throttle and brake
 //    RCCHECK(rclc_publisher_init_best_effort(

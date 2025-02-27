@@ -93,9 +93,10 @@ void setup() {
 #endif
 #ifdef TRANSPORT_SERIAL
     uRos_init_serial_node_ackermann(&testSetup, &throttle_callback_ackermann, &msg_ackermann, "micro_ros_arduino_wifi_node_car", "/driveData");
+    
 #endif
     digitalWrite(GREEN_LED_PIN, LOW);
-    
+
     xTaskCreatePinnedToCore(
       microROS_Task,          // Task function
       "microRos_Task",        // Name of task
@@ -122,15 +123,6 @@ void setup() {
     1,              // Priority of the task
     &TaskCore0,     // Task handle
     1);
-  
-  
-
-
-
-
-
-
-  
   
 }
 

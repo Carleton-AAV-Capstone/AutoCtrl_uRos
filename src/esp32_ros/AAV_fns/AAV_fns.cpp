@@ -97,6 +97,7 @@ void RC_Control(){
   USER_SERIAL.println(accelMag);
   if (!dir) { // Moving forward
     USER_SERIAL.println("FORWARD");
+    //accelMag = map(accelMag, 0, ACCEL_READ_MAX, 0, 500);
     dac.setVoltage((uint16_t) accelMag, false);
     brake_vals.setpoint = 0;
   } else { // Applying braking force
