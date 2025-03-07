@@ -45,7 +45,7 @@ void throttle_callback_ackermann(const void * msgin) {
       // Map steering angle from input range to control range
       USER_SERIAL.print("steer_angle: ");
       USER_SERIAL.println(msg->steering_angle);
-      steer_vals.setpoint = (int) map((long) msg->steering_angle, STEER_READ_MIN, STEER_READ_MAX, 100, 0);
+      jrk_steer.setTarget(map((long) msg->steering_angle, STEER_READ_MIN, STEER_READ_MAX, 0, 4095));
       // Apply control logic
       if (!dir) { // Moving forward
         USER_SERIAL.print("ACCEL_SETPOINT: ");
@@ -55,7 +55,7 @@ void throttle_callback_ackermann(const void * msgin) {
       } else { // Applying braking force
         USER_SERIAL.print("BRAKING_SETPOINT: ");
         dac.setVoltage((uint16_t) 0, false);
-        brake_vals.setpoint = (int) map((long) accelMag, 0, ACCEL_READ_MIN, 0, 100) * -1;
+        jrk_brake.setTarget((int) map((long) accelMag, 0, ACCEL_READ_MIN, 0, BRAKE_MAX) * -1);
         USER_SERIAL.println(brake_vals.setpoint);
         
       }
@@ -69,7 +69,7 @@ void throttle_callback_ackermann(const void * msgin) {
 void RC_Control(){
   uint16_t accelMag;
   bool dir;
-  steer_vals.setpoint = (long) readChannel(STR_RC, STEER_READ_MIN, STEER_READ_MAX, STEER_READ_DEFAULT);
+  jrk_steer.setTarget((STR_RC, STEER_READ_MIN, STEER_READ_MAX, STEER_READ_DEFAULT));
   USER_SERIAL.print("steer_rc: ");
   USER_SERIAL.println(steer_vals.setpoint); 
   int accelMag_signed =  readChannel(THR_RC, ACCEL_READ_MIN, ACCEL_READ_MAX, ACCEL_READ_DEFAULT);
@@ -105,7 +105,7 @@ void RC_Control(){
     USER_SERIAL.println(dac.setVoltage((uint16_t) 0, false));
     USER_SERIAL.print("BRAKING_SETPOINT: ");
     
-    brake_vals.setpoint = (int) map((long) accelMag, 0, ACCEL_READ_MIN, 0, 100) * -1;
+    jrk_brake.setTarget(map((long) accelMag, 0, ACCEL_READ_MIN, 0, BRAKE_MAX) * -1);
     USER_SERIAL.println(brake_vals.setpoint);
   }
   digitalWrite(LED_PIN, LOW);

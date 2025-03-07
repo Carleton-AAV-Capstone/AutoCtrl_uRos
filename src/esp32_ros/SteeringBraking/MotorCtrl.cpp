@@ -16,13 +16,7 @@ int readByte()
 }
 
 
-int sendCommand(uint8_t cmd, uint8_t deviceNum, uint16_t value){
-    CTRL_SERIAL.write(0XAA);
-    CTRL_SERIAL.write(deviceNum);
-    // Send the speed (two bytes, split between 5 and 7 bits)
-    CTRL_SERIAL.write(value & 0x1F);      // Send the least significant 5 bits
-    CTRL_SERIAL.write((value >> 5) & 0x7F);  // Send the most significant 7 bits
-}
+
 
 // Function to exit safe mode and enable motor movement
 // This must be called when the controller restarts or after any error
