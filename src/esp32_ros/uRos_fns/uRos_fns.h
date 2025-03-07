@@ -3,7 +3,6 @@
 
 #include "../hardware_fns/hardware_config.h"
 #include <micro_ros_platformio.h>
-#include <Adafruit_MCP4725.h>
 //#include <micro_ros_arduino.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -39,13 +38,16 @@ typedef struct uRos_struct_s{
     rcl_allocator_t allocator;
     rclc_support_t support;
     rcl_subscription_t subscriber_1;
-    rcl_subscription_t subscriber_2;
+    rcl_publisher_t publisher_1;
     rclc_executor_t executor;
     rclc_executor_t executor_2;
 
 }uRos_s;
+
+
+
 int uRos_init_wireless_node_ackermann(uRos_s *uRosStruct, rclc_subscription_callback_t subscription_callback, ackermann_msgs__msg__AckermannDrive *msg, char *ssid, char *pass, int port, char *nodeName, char *topicName);
 int uRos_init_serial_node_ackermann(uRos_s *uRosStruct, rclc_subscription_callback_t subscription_callback, ackermann_msgs__msg__AckermannDrive *msg, char *nodeName, char *topicName);
-void microROS_Task(void* parameter);
+void microROS_Task_pub(void* parameter);
 void microROS_Task_joy(void* parameter);
 void microROS_Task_throttle(void* parameter);

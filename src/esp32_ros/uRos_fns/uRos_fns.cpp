@@ -9,236 +9,63 @@ extern bool ackermann_recv;
 #include "../Control_Config.h"
 
 #ifdef TRANSPORT_WIFI
-int uRos_init_wireless_node_ackermann(uRos_s *uRosStruct, rclc_subscription_callback_t subscription_callback, ackermann_msgs__msg__AckermannDrive *msg, char *ssid, char *pass, int port, char *nodeName, char *topicName){
+int uRos_init_wireless_node_ackermann(uRos_s *uRosStruct, rclc_subscription_callback_t subscription_callback, ackermann_msgs__msg__AckermannDrive *msg, char *ssid, char *pass, int port, char *nodeName, char *topicName, char *pubTopicName){
     rcl_ret_t status;
-    //192.168.1.126
-    //IPAddress local_IP(uROS_IP);
     IPAddress local_IP(192, 168, 1, 147);
 
-    String bssid = "";
-    while(!WiFi.isConnected()) {
+    while (!WiFi.isConnected()) {
         delay(250);
         digitalWrite(BLUE_LED_PIN, LOW);
         delay(250);
-
-        set_microros_wifi_transports(ssid, pass, local_IP, (uint16_t) port);
-        // set_microros_wifi_transports(ssid, pass, ip, (uint16_t) port);
-        bssid = WiFi.BSSIDstr();
-
-        if(!WiFi.isConnected()){
+        set_microros_wifi_transports(ssid, pass, local_IP, (uint16_t)port);
+        if (!WiFi.isConnected()) {
             USER_SERIAL.println("WIFI CONNECTION FAILED, trying again");
         }
         digitalWrite(BLUE_LED_PIN, HIGH);
-
     }
     USER_SERIAL.println("WIFI CONNECTED");
-    digitalWrite(GREEN_LED_PIN, LOW);
-    delay(250);
     digitalWrite(GREEN_LED_PIN, HIGH);
-
 
     uRosStruct->allocator = rcl_get_default_allocator();
-
-
-
-
-    // Create init_options
-    status = 1;
-    while(status) {
-        digitalWrite(RED_LED_PIN, LOW);
-        digitalWrite(GREEN_LED_PIN, LOW);
-        status = rclc_support_init(&uRosStruct->support, 0, NULL, &uRosStruct->allocator);
-        USER_SERIAL.print("Support_init status: ");
-        USER_SERIAL.println(status);
-        if(status){
-            USER_SERIAL.println("support error, this is likely caused by the agent");
-        }
-        digitalWrite(RED_LED_PIN, HIGH);
-        digitalWrite(GREEN_LED_PIN, HIGH);
-        delay(1000);
-
-    }
-
-    USER_SERIAL.println("SUPPORT_INIT SUCCESS");
-    digitalWrite(GREEN_LED_PIN, LOW);
-    delay(250);
-    digitalWrite(GREEN_LED_PIN, HIGH);
-
-
-    // Create node
-    status = 1;
-    while(status) {
-        digitalWrite(RED_LED_PIN, LOW);
-        digitalWrite(GREEN_LED_PIN, LOW);
-        status = rclc_node_init_default(&uRosStruct->node, "micro_ros_arduino_wifi_node_car", "", &uRosStruct->support);
-        USER_SERIAL.print("node_init status: "); USER_SERIAL.println(status);
-        delay(1000);
-        digitalWrite(RED_LED_PIN, HIGH);
-        digitalWrite(GREEN_LED_PIN, HIGH);
-
-
-    }
-
-    USER_SERIAL.println("NODE_INIT SUCCESS");
-    digitalWrite(GREEN_LED_PIN, LOW);
-    delay(250);
-    digitalWrite(GREEN_LED_PIN, HIGH);
-
-    //Create subscriber
-    status = 1;
-    while(status) {
-        digitalWrite(RED_LED_PIN, LOW);
-        digitalWrite(GREEN_LED_PIN, LOW);
-        status = rclc_subscription_init_best_effort(
-                &uRosStruct->subscriber_1,
-                &uRosStruct->node,
-                ROSIDL_GET_MSG_TYPE_SUPPORT(ackermann_msgs, msg, AckermannDrive), topicName);
-        USER_SERIAL.print("subscriber_init status: "); USER_SERIAL.println(status);
-        delay(1000);
-        digitalWrite(RED_LED_PIN, HIGH);
-        digitalWrite(GREEN_LED_PIN, HIGH);
-
-
-    }
-
-
-    USER_SERIAL.println("SUBSCRIBER_INIT SUCCESS");
-    digitalWrite(GREEN_LED_PIN, LOW);
-    delay(250);
-    digitalWrite(GREEN_LED_PIN, HIGH);
-
+    status = rclc_support_init(&uRosStruct->support, 0, NULL, &uRosStruct->allocator);
+    status = rclc_node_init_default(&uRosStruct->node, nodeName, "", &uRosStruct->support);
+    
+    // Create subscriber
+    status = rclc_subscription_init_best_effort(&uRosStruct->subscriber_1, &uRosStruct->node, ROSIDL_GET_MSG_TYPE_SUPPORT(ackermann_msgs, msg, AckermannDrive), topicName);
+    
+    // Create publisher
+    status = rclc_publisher_init_default(&uRosStruct->publisher, &uRosStruct->node, ROSIDL_GET_MSG_TYPE_SUPPORT(ackermann_msgs, msg, AckermannDrive), pubTopicName);
 
     // Create executor
-    //Create subscriber
-    status = 1;
-    while(status) {
-        digitalWrite(RED_LED_PIN, LOW);
-        digitalWrite(GREEN_LED_PIN, LOW);
-        status = rclc_executor_init(&uRosStruct->executor, &uRosStruct->support.context, 1, &uRosStruct->allocator);
-        USER_SERIAL.print("executor_init status: "); USER_SERIAL.println(status);
-        delay(1000);
-        digitalWrite(RED_LED_PIN, HIGH);
-        digitalWrite(GREEN_LED_PIN, HIGH);
-
-    }
-
-    USER_SERIAL.println("EXECUTOR_INIT SUCCESS");
-    digitalWrite(GREEN_LED_PIN, LOW);
-    delay(250);
-    digitalWrite(GREEN_LED_PIN, HIGH);
-
-    status = rclc_executor_add_subscription(&uRosStruct->executor, &uRosStruct->subscriber_1, msg, *subscription_callback, ON_NEW_DATA);
-    USER_SERIAL.print("ex add sub init status: "); USER_SERIAL.println(status);
-    if(status != RCL_RET_OK){return 0;}
-
-
+    status = rclc_executor_init(&uRosStruct->executor, &uRosStruct->support.context, 2, &uRosStruct->allocator);
+    rclc_executor_add_subscription(&uRosStruct->executor, &uRosStruct->subscriber_1, msg, *subscription_callback, ON_NEW_DATA);
     return status;
 }
 #endif
 
 #ifdef TRANSPORT_SERIAL
-int uRos_init_serial_node_ackermann(uRos_s *uRosStruct, rclc_subscription_callback_t subscription_callback, ackermann_msgs__msg__AckermannDrive *msg, char *nodeName, char *topicName){
+int uRos_init_serial_node_ackermann(uRos_s *uRosStruct, rclc_subscription_callback_t subscription_callback, ackermann_msgs__msg__AckermannDrive *msg, char *nodeName, char *topicName, char *pubTopicName){
     rcl_ret_t status;
     ROS_SERIAL.begin(115200, SERIAL_8N1, RX_PIN_1, TX_PIN_1);
     set_microros_serial_transports(ROS_SERIAL);
-
-
-
+    
     uRosStruct->allocator = rcl_get_default_allocator();
-
-
-
-
-    // Create init_options
-    status = 1;
-    while(status) {
-        digitalWrite(RED_LED_PIN, LOW);
-        digitalWrite(GREEN_LED_PIN, LOW);
-        status = rclc_support_init(&uRosStruct->support, 0, NULL, &uRosStruct->allocator);
-        USER_SERIAL.print("Support_init status: ");
-        USER_SERIAL.println(status);
-        digitalWrite(RED_LED_PIN, HIGH);
-        digitalWrite(GREEN_LED_PIN, HIGH);
-        delay(1000);
-
-    }
-
-    USER_SERIAL.println("SUPPORT_INIT SUCCESS");
-    digitalWrite(GREEN_LED_PIN, LOW);
-    delay(250);
-    digitalWrite(GREEN_LED_PIN, HIGH);
-
-
-    // Create node
-    status = 1;
-    while(status) {
-        digitalWrite(RED_LED_PIN, LOW);
-        digitalWrite(GREEN_LED_PIN, LOW);
-        status = rclc_node_init_default(&uRosStruct->node, "micro_ros_arduino_wifi_node_car", "", &uRosStruct->support);
-        USER_SERIAL.print("node_init status: "); USER_SERIAL.println(status);
-        delay(1000);
-        digitalWrite(RED_LED_PIN, HIGH);
-        digitalWrite(GREEN_LED_PIN, HIGH);
-
-
-    }
-
-    USER_SERIAL.println("NODE_INIT SUCCESS");
-    digitalWrite(GREEN_LED_PIN, LOW);
-    delay(250);
-    digitalWrite(GREEN_LED_PIN, HIGH);
-
-    //Create subscriber
-    status = 1;
-    while(status) {
-        digitalWrite(RED_LED_PIN, LOW);
-        digitalWrite(GREEN_LED_PIN, LOW);
-        status = rclc_subscription_init_best_effort(
-                &uRosStruct->subscriber_1,
-                &uRosStruct->node,
-                ROSIDL_GET_MSG_TYPE_SUPPORT(ackermann_msgs, msg, AckermannDrive), topicName);
-        USER_SERIAL.print("subscriber_init status: "); USER_SERIAL.println(status);
-        delay(1000);
-        digitalWrite(RED_LED_PIN, HIGH);
-        digitalWrite(GREEN_LED_PIN, HIGH);
-
-
-    }
-
-
-    USER_SERIAL.println("SUBSCRIBER_INIT SUCCESS");
-    digitalWrite(GREEN_LED_PIN, LOW);
-    delay(250);
-    digitalWrite(GREEN_LED_PIN, HIGH);
-
-
+    status = rclc_support_init(&uRosStruct->support, 0, NULL, &uRosStruct->allocator);
+    status = rclc_node_init_default(&uRosStruct->node, nodeName, "", &uRosStruct->support);
+    
+    // Create subscriber
+    status = rclc_subscription_init_best_effort(&uRosStruct->subscriber_1, &uRosStruct->node, ROSIDL_GET_MSG_TYPE_SUPPORT(ackermann_msgs, msg, AckermannDrive), topicName);
+    
+    // Create publisher
+    status = rclc_publisher_init_default(&uRosStruct->publisher_1, &uRosStruct->node, ROSIDL_GET_MSG_TYPE_SUPPORT(ackermann_msgs, msg, AckermannDrive), pubTopicName);
+    
     // Create executor
-    //Create subscriber
-    status = 1;
-    while(status) {
-        digitalWrite(RED_LED_PIN, LOW);
-        digitalWrite(GREEN_LED_PIN, LOW);
-        status = rclc_executor_init(&uRosStruct->executor, &uRosStruct->support.context, 1, &uRosStruct->allocator);
-        USER_SERIAL.print("executor_init status: "); USER_SERIAL.println(status);
-        delay(1000);
-        digitalWrite(RED_LED_PIN, HIGH);
-        digitalWrite(GREEN_LED_PIN, HIGH);
-
-    }
-
-    USER_SERIAL.println("EXECUTOR_INIT SUCCESS");
-    digitalWrite(GREEN_LED_PIN, LOW);
-    delay(250);
-    digitalWrite(GREEN_LED_PIN, HIGH);
-
-    status = rclc_executor_add_subscription(&uRosStruct->executor, &uRosStruct->subscriber_1, msg, *subscription_callback, ON_NEW_DATA);
-    USER_SERIAL.print("ex add sub init status: "); USER_SERIAL.println(status);
-    if(status != RCL_RET_OK){return 0;}
-
-
+    status = rclc_executor_init(&uRosStruct->executor, &uRosStruct->support.context, 2, &uRosStruct->allocator);
+    rclc_executor_add_subscription(&uRosStruct->executor, &uRosStruct->subscriber_1, msg, *subscription_callback, ON_NEW_DATA);
     return status;
 }
 #endif
+
 
 // #include "../hardware_fns/hardware_fns.h"
 // extern Adafruit_MCP4725 dac;
@@ -246,10 +73,9 @@ int uRos_init_serial_node_ackermann(uRos_s *uRosStruct, rclc_subscription_callba
 
 
 
-extern int setpoint;
 
-void microROS_Task(void* parameter) {
-    pinMode(DRIVER_ERROR_PIN, INPUT);
+void microROS_Task_pub(void* parameter) {
+  pinMode(DRIVER_ERROR_PIN, INPUT);
   TickType_t xLastWakeTime = xTaskGetTickCount();
   const TickType_t xFrequency = uROS_TASK_DELAY / portTICK_PERIOD_MS;
   //dac.setVoltage(1, false);
@@ -275,9 +101,29 @@ void microROS_Task(void* parameter) {
             }
         vTaskDelayUntil(&xLastWakeTime, xFrequency); // Wait until next cycle
     }
-
-
 }
+
+
+void microROS_Task_sub(void* parameter) {
+    pinMode(DRIVER_ERROR_PIN, INPUT);
+    TickType_t xLastWakeTime = xTaskGetTickCount();
+    const TickType_t xFrequency = uROS_TASK_DELAY / portTICK_PERIOD_MS;
+    //dac.setVoltage(1, false);
+      rcl_ret_t status;
+      while (true) {
+        ackermann_msgs__msg__AckermannDrive msg_sub;
+        msg_sub.speed = speed;
+        msg.steering_angle = steering_angle;
+    
+        rcl_ret_t status = rcl_publish(&uRosStruct->publisher, &msg, NULL);
+        if (status != RCL_RET_OK) {
+            USER_SERIAL.println("Failed to publish message");
+        } else {
+            USER_SERIAL.println("Published Ackermann Drive message");
+        }
+          vTaskDelayUntil(&xLastWakeTime, xFrequency); // Wait until next cycle
+      }
+  }
 
 
 

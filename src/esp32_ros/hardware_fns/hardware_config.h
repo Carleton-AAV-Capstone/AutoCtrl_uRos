@@ -5,6 +5,12 @@
 #ifndef HARDWARE_CONFIG_H
 #define HARDWARE_CONFIG_H
 
+typedef struct curr_state_s {
+    float speed;
+    float steer_angle;
+    float accel;
+    bool dir;
+}CurrState;
 
 //rc pins
 //22,0,34,35

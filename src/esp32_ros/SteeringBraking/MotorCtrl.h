@@ -9,6 +9,9 @@
 #define BRAKE_ID 0x02
 
 #define BRAKE_MAX 4095
+#define DAC_ADDR_A0_FLOAT  0x48  // If A0 is floating
+
+#define DAC_ADDR DAC_ADDR_A0_FLOAT
 
 JrkG2I2C jrk_steer(STEER_ID);
 JrkG2I2C jrk_brake(BRAKE_ID);
@@ -33,17 +36,8 @@ typedef struct pid_s{
     int errorLimit;
 }PID_vals;
 
+void writeDAC(uint16_t value);
 
-
-int readByte();
-
-void exitSafeStart(int deviceNum);
-
-void setMotorSpeed(int speed, int deviceNum);
-
-float getA1_scaled(int deviceNum);
-float getA2_scaled(int deviceNum);
-
-void motor_controller_setup();
+void detectDAC();
 
 #endif
