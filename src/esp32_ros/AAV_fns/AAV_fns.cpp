@@ -9,6 +9,68 @@ extern int setpoint;
 extern PID_vals brake_vals;
 extern PID_vals steer_vals;
 
+
+
+#include <Wire.h>
+
+// Possible DAC addresses
+#define DAC_ADDR_A0_GND  0x0C  // If A0 is tied to GND
+#define DAC_ADDR_A0_VCC  0x48  // If A0 is tied to VCC
+
+uint8_t dacAddress = DAC_ADDR_A0_GND;  // Default to 0x0C
+
+void writeDAC(uint16_t value) {
+    value &= 0x3FF;  // Ensure value is 10-bit (0-1023)
+    
+    Wire.beginTransmission(dacAddress);
+    Wire.write((value >> 8) & 0xFF);  // Upper 8 bits
+    Wire.write(value & 0xFF);         // Lower 8 bits
+    if (Wire.endTransmission() != 0) {
+        Serial.println("ERROR: DAC did not acknowledge!");
+    }
+}
+
+void detectDAC() {
+    Serial.println("Scanning for DAC...");
+    Wire.beginTransmission(DAC_ADDR_A0_GND);
+    if (Wire.endTransmission() == 0) {
+        dacAddress = DAC_ADDR_A0_GND;
+        Serial.println("DAC detected at 0x0C (A0 = GND)");
+        return;
+    }
+    
+    Wire.beginTransmission(DAC_ADDR_A0_VCC);
+    if (Wire.endTransmission() == 0) {
+        dacAddress = DAC_ADDR_A0_VCC;
+        Serial.println("DAC detected at 0x46 (A0 = VCC)");
+        return;
+    }
+    
+    Serial.println("ERROR: No DAC detected!");
+}
+
+void setup() {
+    Wire.begin();  // Initialize I2C
+    Serial.begin(115200);
+    delay(1000);  // Give time for serial monitor to open
+    detectDAC();
+}
+
+void loop() {
+    for (uint16_t val = 0; val <= 1023; val++) {
+        writeDAC(val);
+        Serial.print("DAC Output: ");
+        Serial.println(val);
+        delay(1);  // Small delay to observe the output
+    }
+    for (uint16_t val = 0; val <= 1023; val++) {
+        writeDAC(val);
+        Serial.print("DAC Output: ");
+        Serial.println(1023-val);
+        delay(1);  // Small delay to observe the output
+    }
+}
+
 /**
  * @brief Callback function for processing Ackermann drive messages.
  * 
