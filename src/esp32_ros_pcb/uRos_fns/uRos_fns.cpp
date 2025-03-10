@@ -74,7 +74,7 @@ int uRos_init_serial_node_ackermann(uRos_s *uRosStruct, rclc_subscription_callba
 
 
 
-void microROS_Task_pub(void* parameter) {
+void microROS_Task_sub(void* parameter) {
   pinMode(DRIVER_ERROR_PIN, INPUT);
   TickType_t xLastWakeTime = xTaskGetTickCount();
   const TickType_t xFrequency = uROS_TASK_DELAY / portTICK_PERIOD_MS;
@@ -82,9 +82,7 @@ void microROS_Task_pub(void* parameter) {
     rcl_ret_t status;
     while (true) {
         //USER_SERIAL.println("braketask");
-        
-
-        bool rc = !readSwitch(USE_RC, false);
+        ool rc = !readSwitch(USE_RC, false);
         delay(1);
         if(!readSwitch(USE_RC, false) && rc){
             USER_SERIAL.println("uROS TASK");
@@ -104,7 +102,7 @@ void microROS_Task_pub(void* parameter) {
 }
 
 extern CurrState state;
-void microROS_Task_sub(void* parameter) {
+void microROS_Task_pub(void* parameter) {
     pinMode(DRIVER_ERROR_PIN, INPUT);
     TickType_t xLastWakeTime = xTaskGetTickCount();
     const TickType_t xFrequency = uROS_TASK_DELAY / portTICK_PERIOD_MS;
@@ -113,16 +111,13 @@ void microROS_Task_sub(void* parameter) {
       while (true) {
         ackermann_msgs__msg__AckermannDrive msg_sub;
 
- 
-        //state.dir = jrk_steer.getScaledFeedback();
-        state.steer_angle
-
-        if (status != RCL_RET_OK) {
-            USER_SERIAL.println("Failed to publish message");
-        } else {
-            USER_SERIAL.println("Published Ackermann Drive message");
-        }
-          vTaskDelayUntil(&xLastWakeTime, xFrequency); // Wait until next cycle
+        ackermann_recv = false;
+        msg_sub.steering_angle = state.steer_angle;
+        msg_sub.acceleration = state.accel;
+        
+        status = rcl_publish(&testSetup.publisher, &msg_sub, NULL);
+        
+        vTaskDelayUntil(&xLastWakeTime, xFrequency); // Wait until next cycle
       }
   }
 

@@ -1,7 +1,6 @@
 #include "hardware_config.h"
 #include "hardware_fns.h"
-
-extern Adafruit_MCP4725 dac;
+#include "../SteeringBraking/MotorCtrl.h"
 
 void hardware_setup(){
 
@@ -27,7 +26,7 @@ void hardware_setup(){
         digitalWrite(RED_LED_PIN, LOW);
         delay(100);
         USER_SERIAL.println("CONNECTING TO DAC i2C");
-        begin = dac.begin(0x62);
+        detectDAC();
         if(!begin){
             USER_SERIAL.println("DAC CONNECTION FAIL");
         }
