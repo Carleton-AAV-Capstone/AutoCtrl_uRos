@@ -1,7 +1,7 @@
 
 #include <Arduino.h>
 
-#include "../hardware_fns/hardware_config.h"
+#include "../hardware_config.h"
 #include <micro_ros_platformio.h>
 //#include <micro_ros_arduino.h>
 #include <stdlib.h>

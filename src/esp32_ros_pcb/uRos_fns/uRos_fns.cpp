@@ -1,13 +1,13 @@
 
-
+#include "../hardware_config.h"
 #include "uRos_fns.h"
 extern rcl_node_t node;
 extern uRos_s testSetup;
 extern bool ackermann_recv;
-#include "../hardware_fns/hardware_fns.h"
-#include "../AAV_fns/AAV_fns.h"
-#include "../Control_Config.h"
-#include "../SteeringBraking/MotorCtrl.h"
+// #include "../hardware_fns.h"
+// #include "../AAV_fns/AAV_fns.h"
+ #include "../Control_Config.h"
+// #include "../SteeringBraking/MotorCtrl.h"
 #ifdef TRANSPORT_WIFI
 int uRos_init_wireless_node_ackermann(uRos_s *uRosStruct, rclc_subscription_callback_t subscription_callback, ackermann_msgs__msg__AckermannDrive *msg, char *ssid, char *pass, int port, char *nodeName, char *topicName, char *pubTopicName){
     rcl_ret_t status;
@@ -82,7 +82,7 @@ void microROS_Task_sub(void* parameter) {
     rcl_ret_t status;
     while (true) {
         //USER_SERIAL.println("braketask");
-        ool rc = !readSwitch(USE_RC, false);
+        bool rc = !readSwitch(USE_RC, false);
         delay(1);
         if(!readSwitch(USE_RC, false) && rc){
             USER_SERIAL.println("uROS TASK");
