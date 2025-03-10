@@ -14,4 +14,6 @@
 #define BRK_PID_TASK_DELAY 10 
 #define STR_PID_TASK_DELAY 10 
 
+#define BRAKE_MAX 4095
+
 

@@ -1,6 +1,9 @@
 
-#include <Arduino.h>
+#ifndef UROS_FNS_H
+#define UROS_FNS_H
 
+#include <Arduino.h>
+//#include "../Control_Config.h"
 #include "../hardware_config.h"
 #include <micro_ros_platformio.h>
 //#include <micro_ros_arduino.h>
@@ -47,7 +50,20 @@ typedef struct uRos_struct_s{
 
 
 int uRos_init_wireless_node_ackermann(uRos_s *uRosStruct, rclc_subscription_callback_t subscription_callback, ackermann_msgs__msg__AckermannDrive *msg, char *ssid, char *pass, int port, char *nodeName, char *topicName);
-int uRos_init_serial_node_ackermann(uRos_s *uRosStruct, rclc_subscription_callback_t subscription_callback, ackermann_msgs__msg__AckermannDrive *msg, char *nodeName, char *topicName);
+int uRos_init_serial_node_ackermann(uRos_s *uRosStruct, rclc_subscription_callback_t subscription_callback, ackermann_msgs__msg__AckermannDrive *msg, char *nodeName, char *topicName, char *pubTopicName);
 void microROS_Task_pub(void* parameter);
 void microROS_Task_joy(void* parameter);
 void microROS_Task_throttle(void* parameter);
+
+/**
+ * @brief Callback function for processing Ackermann drive messages.
+ * 
+ * This function reads the acceleration and steering angle values from the received 
+ * Ackermann message and applies them to the control system. It also checks whether
+ * the system should use remote control (RC) input instead.
+ * 
+ * @param msgin Pointer to the received Ackermann drive message.
+ */
+void throttle_callback_ackermann(const void * msgin);
+
+#endif

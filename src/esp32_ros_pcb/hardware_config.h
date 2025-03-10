@@ -1,9 +1,11 @@
 #include "Arduino.h"
 
-#define TRANSPORT_SERIAL
-#undef TRANSPORT_WIFI
+
 #ifndef HARDWARE_CONFIG_H
 #define HARDWARE_CONFIG_H
+
+#define TRANSPORT_SERIAL
+#undef TRANSPORT_WIFI
 
 typedef struct curr_state_s {
     float speed;
@@ -42,9 +44,33 @@ typedef struct curr_state_s {
 #define RX_PIN_1 4
 #define TX_PIN_1 5
 
+
+
+
+#define STEER_READ_MAX 100//double check this
+#define STEER_READ_MIN 0
+#define STEER_READ_DEFAULT 50
+
+
+#define ACCEL_READ_MAX 2000
+#define ACCEL_READ_MIN -2000
+#define ACCEL_READ_DEFAULT 0
+
+#define uROS_TASK_DELAY 10 // const TickType_t xFrequency = uROS_TASK_DELAY / portTICK_PERIOD_MS;
+#define BRK_PID_TASK_DELAY 10 
+#define STR_PID_TASK_DELAY 10 
+
+
+
+
 //#define RX_PIN_1 3
 //#define TX_PIN_1 1
 
 #define TX_PIN 27
 #define RX_PIN 26
+
+
+void hardware_setup();
+int readChannel(int channelInput, int minLimit, int maxLimit, int defaultValue);
+bool readSwitch(byte channelInput, bool defaultValue);
 #endif

@@ -1,5 +1,6 @@
 #include "../hardware_config.h"
 #include <JrkG2.h>
+
 #ifndef MCTRL_H
 #define MCTRL_H
 
@@ -12,11 +13,6 @@
 #define DAC_ADDR_A0_FLOAT  0x48  // If A0 is floating
 
 #define DAC_ADDR DAC_ADDR_A0_FLOAT
-
-JrkG2I2C jrk_steer(STEER_ID);
-JrkG2I2C jrk_brake(BRAKE_ID);
-
-
 
 
 

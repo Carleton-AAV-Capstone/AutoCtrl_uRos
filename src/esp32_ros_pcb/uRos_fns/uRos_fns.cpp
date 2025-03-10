@@ -1,12 +1,14 @@
 
 #include "../hardware_config.h"
+#include "../rc.h"
 #include "uRos_fns.h"
 extern rcl_node_t node;
 extern uRos_s testSetup;
 extern bool ackermann_recv;
+extern CurrState curr_state;
 // #include "../hardware_fns.h"
 // #include "../AAV_fns/AAV_fns.h"
- #include "../Control_Config.h"
+ ///#include "../Control_Config.h"
 // #include "../SteeringBraking/MotorCtrl.h"
 #ifdef TRANSPORT_WIFI
 int uRos_init_wireless_node_ackermann(uRos_s *uRosStruct, rclc_subscription_callback_t subscription_callback, ackermann_msgs__msg__AckermannDrive *msg, char *ssid, char *pass, int port, char *nodeName, char *topicName, char *pubTopicName){
@@ -101,9 +103,9 @@ void microROS_Task_sub(void* parameter) {
     }
 }
 
-extern CurrState state;
+
 void microROS_Task_pub(void* parameter) {
-    pinMode(DRIVER_ERROR_PIN, INPUT);
+    
     TickType_t xLastWakeTime = xTaskGetTickCount();
     const TickType_t xFrequency = uROS_TASK_DELAY / portTICK_PERIOD_MS;
     //dac.setVoltage(1, false);
@@ -112,10 +114,10 @@ void microROS_Task_pub(void* parameter) {
         ackermann_msgs__msg__AckermannDrive msg_sub;
 
         ackermann_recv = false;
-        msg_sub.steering_angle = state.steer_angle;
-        msg_sub.acceleration = state.accel;
+        msg_sub.steering_angle = curr_state.steer_angle;
+        msg_sub.acceleration = curr_state.accel;
         
-        status = rcl_publish(&testSetup.publisher, &msg_sub, NULL);
+        status = rcl_publish(&testSetup.publisher_1, &msg_sub, NULL);
         
         vTaskDelayUntil(&xLastWakeTime, xFrequency); // Wait until next cycle
       }

@@ -1,4 +1,5 @@
 #include "hardware_config.h"
+#include "./motor_ctrl/MotorCtrl.h"
 // #include "hardware_fns.h"
 // #include "../SteeringBraking/MotorCtrl.h"
 
@@ -31,7 +32,7 @@ void hardware_setup(){
             USER_SERIAL.println("DAC CONNECTION FAIL");
         }
         //set write EEPROM
-        dac.setVoltage(0,true);
+        writeDAC(0);
         delay(250);
         digitalWrite(RED_LED_PIN, HIGH);
         delay(250);

@@ -1,15 +1,17 @@
-
+#include <JrkG2.h>
 #include <Arduino.h>
 
 #include "./uRos_fns/uRos_fns.h"
 
-#include "hardware_config.h"
+// #include "hardware_config.h"
 
 bool ros_enabled = true;
 
-
+bool ackermann_recv;
 CurrState curr_state = CurrState();
 
+JrkG2I2C jrk_steer(0x01);
+JrkG2I2C jrk_brake(0x02);
 
 ackermann_msgs__msg__AckermannDrive msg_ackermann;
 
@@ -23,12 +25,15 @@ TaskHandle_t TaskCore2;//Core 0 used for microROS, and other communication and s
 TaskHandle_t TaskCore1;//Core 1 used for signals, PID loops, Sensor reading, motor control. hard(er) realtime
 
 
-
+SemaphoreHandle_t i2cSemaphore;
 
 void setup() {
 
-
-  motor_controller_setup();
+  // i2cSemaphore = xSemaphoreCreateMutex();
+  // if (i2cSemaphore == NULL) {
+  //     USER_SERIAL.println("ERROR: Failed to create I2C semaphore");
+  // }
+  //motor_controller_setup();
   USER_SERIAL.begin(115200);
   hardware_setup();
 
@@ -40,7 +45,7 @@ void setup() {
                                       NET_SSID, NET_PASS, uROS_PORT, "micro_ros_arduino_wifi_node_car", "/driveData");
 #endif
 #ifdef TRANSPORT_SERIAL
-    uRos_init_serial_node_ackermann(&testSetup, &throttle_callback_ackermann, &msg_ackermann, "micro_ros_arduino_wifi_node_car", "/driveData");
+    uRos_init_serial_node_ackermann(&testSetup, &throttle_callback_ackermann, &msg_ackermann, "micro_ros_arduino_wifi_node_car", "/driveData", "/ackermannPub");
     
 #endif
     digitalWrite(GREEN_LED_PIN, LOW);
@@ -55,14 +60,14 @@ void setup() {
       0);
 
 
-    xTaskCreatePinnedToCore(
-     steeringPID_task,          // Task function
-    "steeringPID",        // Name of task
-    4096,           // Stack size in words
-    NULL,           // Task input parameter
-    1,              // Priority of the task
-    &TaskCore0,     // Task handle
-    1);
+    // xTaskCreatePinnedToCore(
+    //  steeringPID_task,          // Task function
+    // "steeringPID",        // Name of task
+    // 4096,           // Stack size in words
+    // NULL,           // Task input parameter
+    // 1,              // Priority of the task
+    // &TaskCore0,     // Task handle
+    // 1);
   
 }
 
