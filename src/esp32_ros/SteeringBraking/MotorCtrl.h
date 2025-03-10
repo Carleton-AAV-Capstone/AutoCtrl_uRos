@@ -38,6 +38,6 @@ typedef struct pid_s{
 
 void writeDAC(uint16_t value);
 
-void detectDAC();
+bool detectDAC();
 
 #endif

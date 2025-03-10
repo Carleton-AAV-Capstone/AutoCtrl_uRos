@@ -4,7 +4,7 @@
 // #include "../SteeringBraking/MotorCtrl.h"
 
 void hardware_setup(){
-
+    Wire.begin();
 
     pinMode(BLUE_LED_PIN, OUTPUT);
     pinMode(RED_LED_PIN, OUTPUT);
@@ -27,16 +27,18 @@ void hardware_setup(){
         digitalWrite(RED_LED_PIN, LOW);
         delay(100);
         USER_SERIAL.println("CONNECTING TO DAC i2C");
-        detectDAC();
+        begin = detectDAC();
         if(!begin){
             USER_SERIAL.println("DAC CONNECTION FAIL");
         }
-        //set write EEPROM
-        writeDAC(0);
-        delay(250);
-        digitalWrite(RED_LED_PIN, HIGH);
-        delay(250);
-    }
+
+        }
+  
+    writeDAC(0);
+    delay(250);
+    digitalWrite(RED_LED_PIN, HIGH);
+    delay(250);
+    
 
     USER_SERIAL.println("DAC CONNECTION SUCCESS");
 

@@ -118,7 +118,7 @@ void microROS_Task_pub(void* parameter) {
         msg_sub.acceleration = curr_state.accel;
         
         status = rcl_publish(&testSetup.publisher_1, &msg_sub, NULL);
-        
+        USER_SERIAL.println("PUBLISHED");
         vTaskDelayUntil(&xLastWakeTime, xFrequency); // Wait until next cycle
       }
   }

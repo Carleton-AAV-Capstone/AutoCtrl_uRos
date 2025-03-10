@@ -13,7 +13,9 @@ CurrState curr_state = CurrState();
 JrkG2I2C jrk_steer(0x01);
 JrkG2I2C jrk_brake(0x02);
 
+
 ackermann_msgs__msg__AckermannDrive msg_ackermann;
+
 
 //rcl_node_t node;
 //uRos_s testSetup_throttle = uRos_s();  // Initialize the object properly if needed.
@@ -25,7 +27,7 @@ TaskHandle_t TaskCore2;//Core 0 used for microROS, and other communication and s
 TaskHandle_t TaskCore1;//Core 1 used for signals, PID loops, Sensor reading, motor control. hard(er) realtime
 
 
-SemaphoreHandle_t i2cSemaphore;
+// SemaphoreHandle_t i2cSemaphore;
 
 void setup() {
 
@@ -36,6 +38,7 @@ void setup() {
   //motor_controller_setup();
   USER_SERIAL.begin(115200);
   hardware_setup();
+  USER_SERIAL.println("hardware setup done");
 
 
 #ifdef TRANSPORT_WIFI

@@ -13,19 +13,15 @@ void writeDAC(uint16_t value) {
   }
 }
 
-void detectDAC() {
+bool detectDAC() {
   USER_SERIAL.println("Scanning for DAC...");
   Wire.beginTransmission(DAC_ADDR);
   if (Wire.endTransmission() == 0) {
       USER_SERIAL.println("DAC detected at 0x0C (A0 = GND)");
-      return;
+      return 1;
   }
-  
-  Wire.beginTransmission(DAC_ADDR);
-  if (Wire.endTransmission() == 0) {
-      USER_SERIAL.println("DAC detected at 0x46 (A0 = VCC)");
-      return;
-  }
+
   
   USER_SERIAL.println("ERROR: No DAC detected!");
+  return 0;
 }

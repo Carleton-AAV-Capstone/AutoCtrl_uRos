@@ -15,18 +15,17 @@ void writeDAC(uint16_t value) {
 
     //if (xSemaphoreTake(i2cSemaphore, pdMS_TO_TICKS(100)) == pdTRUE) {
         Wire.beginTransmission(DAC_ADDR);
-        Wire.write((value >> 8) & 0xFF);  // Upper 8 bits
-        Wire.write(value & 0xFF);         // Lower 8 bits
+        Wire.write(value >> 2);          // D9-D2
+        Wire.write((value & 0x03) << 6); // D1-D0 in bits 7-6
         if (Wire.endTransmission() != 0) {
             USER_SERIAL.println("ERROR: DAC did not acknowledge!");
         }
+        
        // xSemaphoreGive(i2cSemaphore);
-     else {
-        USER_SERIAL.println("ERROR: Failed to acquire I2C semaphore for writeDAC");
-    }
+     
 }
 
-void detectDAC() {
+bool detectDAC() {
     USER_SERIAL.println("Scanning for DAC...");
 
     //if (xSemaphoreTake(i2cSemaphore, pdMS_TO_TICKS(100)) == pdTRUE) {
@@ -34,15 +33,10 @@ void detectDAC() {
         if (Wire.endTransmission() == 0) {
             USER_SERIAL.println("DAC detected at 0x0C (A0 = GND)");
             //xSemaphoreGive(i2cSemaphore);
-            return;
+            return 1;
         }
 
-        Wire.beginTransmission(DAC_ADDR);
-        if (Wire.endTransmission() == 0) {
-            USER_SERIAL.println("DAC detected at 0x46 (A0 = VCC)");
-            //xSemaphoreGive(i2cSemaphore);
-            return;
-        }
+        return 0;
 
         //xSemaphoreGive(i2cSemaphore);
     //}
