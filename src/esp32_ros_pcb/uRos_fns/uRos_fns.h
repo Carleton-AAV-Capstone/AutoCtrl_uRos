@@ -52,6 +52,7 @@ typedef struct uRos_struct_s{
 int uRos_init_wireless_node_ackermann(uRos_s *uRosStruct, rclc_subscription_callback_t subscription_callback, ackermann_msgs__msg__AckermannDrive *msg, char *ssid, char *pass, int port, char *nodeName, char *topicName);
 int uRos_init_serial_node_ackermann(uRos_s *uRosStruct, rclc_subscription_callback_t subscription_callback, ackermann_msgs__msg__AckermannDrive *msg, char *nodeName, char *topicName, char *pubTopicName);
 void microROS_Task_pub(void* parameter);
+void microROS_Task_sub(void* parameter);
 void microROS_Task_joy(void* parameter);
 void microROS_Task_throttle(void* parameter);
 

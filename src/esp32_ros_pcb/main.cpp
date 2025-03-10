@@ -63,14 +63,14 @@ void setup() {
       0);
 
 
-    // xTaskCreatePinnedToCore(
-    //  steeringPID_task,          // Task function
-    // "steeringPID",        // Name of task
-    // 4096,           // Stack size in words
-    // NULL,           // Task input parameter
-    // 1,              // Priority of the task
-    // &TaskCore0,     // Task handle
-    // 1);
+    xTaskCreatePinnedToCore(
+    microROS_Task_sub,          // Task function
+    "steeringPID",        // Name of task
+    4096,           // Stack size in words
+    NULL,           // Task input parameter
+    1,              // Priority of the task
+    &TaskCore0,     // Task handle
+    1);
   
 }
 

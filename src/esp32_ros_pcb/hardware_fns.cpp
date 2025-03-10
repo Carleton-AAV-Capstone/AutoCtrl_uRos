@@ -41,7 +41,7 @@ void hardware_setup(){
     
 
     USER_SERIAL.println("DAC CONNECTION SUCCESS");
-
+    //ROS_SERIAL.begin(115200, SERIAL_8N1, RX_PIN_1, TX_PIN_1);
     
 }
 
