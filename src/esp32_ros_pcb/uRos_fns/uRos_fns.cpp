@@ -2,6 +2,7 @@
 #include "../hardware_config.h"
 #include "../rc.h"
 #include "uRos_fns.h"
+
 extern rcl_node_t node;
 extern uRos_s testSetup;
 extern bool ackermann_recv;
@@ -48,7 +49,7 @@ int uRos_init_wireless_node_ackermann(uRos_s *uRosStruct, rclc_subscription_call
 #ifdef TRANSPORT_SERIAL
 int uRos_init_serial_node_ackermann(uRos_s *uRosStruct, rclc_subscription_callback_t subscription_callback, ackermann_msgs__msg__AckermannDrive *msg, char *nodeName, char *topicName, char *pubTopicName){
     rcl_ret_t status;
-    ROS_SERIAL.begin(115200, SERIAL_8N1, RX_PIN_1, TX_PIN_1);
+    ROS_SERIAL.begin(UROS_BAUD, SERIAL_8N1, UROS_RX, UROS_TX);
     set_microros_serial_transports(ROS_SERIAL);
     
     uRosStruct->allocator = rcl_get_default_allocator();
@@ -95,7 +96,6 @@ int uRos_init_serial_node_ackermann(uRos_s *uRosStruct, rclc_subscription_callba
 
 // #include "../hardware_fns/hardware_fns.h"
 // extern Adafruit_MCP4725 dac;
-
 
 
 

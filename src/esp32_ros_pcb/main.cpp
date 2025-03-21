@@ -36,6 +36,7 @@ void setup() {
   //     USER_SERIAL.println("ERROR: Failed to create I2C semaphore");
   // }
   //motor_controller_setup();
+  
   USER_SERIAL.begin(115200);
   hardware_setup();
   USER_SERIAL.println("hardware setup done");
@@ -55,6 +56,11 @@ void setup() {
     USER_SERIAL.println("Serial node initialized");
     
 #endif
+    if(rmw_uros_sync_session(1000)){
+      USER_SERIAL.println("Sync failed");
+    }else{
+      USER_SERIAL.println("Sync success");
+    }
     //digitalWrite(GREEN_LED_PIN, LOW);
 
     xTaskCreatePinnedToCore(

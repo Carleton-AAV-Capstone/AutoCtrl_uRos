@@ -56,6 +56,10 @@ typedef struct curr_state_s {
 #define ACCEL_READ_MIN -2000
 #define ACCEL_READ_DEFAULT 0
 
+#define UROS_BAUD 115200
+#define UROS_TX TX1
+#define UROS_RX RX1
+
 #define uROS_TASK_DELAY_SUB 10 // const TickType_t xFrequency = uROS_TASK_DELAY / portTICK_PERIOD_MS;
 #define uROS_TASK_DELAY_PUB 1000 // const TickType_t xFrequency = uROS_TASK_DELAY / portTICK_PERIOD_MS;
 #define BRK_PID_TASK_DELAY 10 
