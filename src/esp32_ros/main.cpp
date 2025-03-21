@@ -43,7 +43,10 @@ void setup() {
                                       NET_SSID, NET_PASS, uROS_PORT, "micro_ros_arduino_wifi_node_car", "/driveData");
 #endif
 #ifdef TRANSPORT_SERIAL
-    uRos_init_serial_node_ackermann(&testSetup, &throttle_callback_ackermann, &msg_ackermann, "micro_ros_arduino_wifi_node_car", "/driveData");
+    while(uRos_init_serial_node_ackermann(&testSetup, &throttle_callback_ackermann, &msg_ackermann, "micro_ros_arduino_wifi_node_car", "/driveData") != 0) {
+      USER_SERIAL.println("Failed to initialize serial node, retrying...");
+    } 
+    USER_SERIAL.println("Serial node initialized");
     
 #endif
     digitalWrite(GREEN_LED_PIN, LOW);

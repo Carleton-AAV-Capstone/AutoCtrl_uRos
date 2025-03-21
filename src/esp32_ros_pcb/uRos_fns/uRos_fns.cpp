@@ -52,18 +52,42 @@ int uRos_init_serial_node_ackermann(uRos_s *uRosStruct, rclc_subscription_callba
     set_microros_serial_transports(ROS_SERIAL);
     
     uRosStruct->allocator = rcl_get_default_allocator();
+    
     status = rclc_support_init(&uRosStruct->support, 0, NULL, &uRosStruct->allocator);
+
+    if(status != RCL_RET_OK){
+        USER_SERIAL.println("Failed to initialize support");
+        return status;
+    }
     status = rclc_node_init_default(&uRosStruct->node, nodeName, "", &uRosStruct->support);
+    if(status != RCL_RET_OK){
+        USER_SERIAL.println("Failed to initialize node");
+        return status;
+    }
     
     // Create subscriber
     status = rclc_subscription_init_best_effort(&uRosStruct->subscriber_1, &uRosStruct->node, ROSIDL_GET_MSG_TYPE_SUPPORT(ackermann_msgs, msg, AckermannDrive), topicName);
-    
+    if(status != RCL_RET_OK){
+        USER_SERIAL.println("Failed to initialize subscriber");
+        return status;
+    }
     // Create publisher
     status = rclc_publisher_init_default(&uRosStruct->publisher_1, &uRosStruct->node, ROSIDL_GET_MSG_TYPE_SUPPORT(ackermann_msgs, msg, AckermannDrive), pubTopicName);
-    
+    if(status != RCL_RET_OK){
+        USER_SERIAL.println("Failed to initialize publisher");
+        return status;
+    }
     // Create executor
     status = rclc_executor_init(&uRosStruct->executor, &uRosStruct->support.context, 2, &uRosStruct->allocator);
-    rclc_executor_add_subscription(&uRosStruct->executor, &uRosStruct->subscriber_1, msg, *subscription_callback, ON_NEW_DATA);
+    if(status != RCL_RET_OK){
+        USER_SERIAL.println("Failed to initialize executor");
+        return status;
+    }
+    status = rclc_executor_add_subscription(&uRosStruct->executor, &uRosStruct->subscriber_1, msg, *subscription_callback, ON_NEW_DATA);
+    if(status != RCL_RET_OK){
+        USER_SERIAL.println("Failed to add subscription to executor");
+        return status;
+    }
     return status;
 }
 #endif
@@ -79,7 +103,7 @@ int uRos_init_serial_node_ackermann(uRos_s *uRosStruct, rclc_subscription_callba
 void microROS_Task_sub(void* parameter) {
   pinMode(DRIVER_ERROR_PIN, INPUT);
   TickType_t xLastWakeTime = xTaskGetTickCount();
-  const TickType_t xFrequency = uROS_TASK_DELAY / portTICK_PERIOD_MS;
+  const TickType_t xFrequency = uROS_TASK_DELAY_SUB / portTICK_PERIOD_MS;
   //dac.setVoltage(1, false);
     rcl_ret_t status;
     while (true) {
@@ -107,7 +131,7 @@ void microROS_Task_sub(void* parameter) {
 void microROS_Task_pub(void* parameter) {
     
     TickType_t xLastWakeTime = xTaskGetTickCount();
-    const TickType_t xFrequency = uROS_TASK_DELAY / portTICK_PERIOD_MS;
+    const TickType_t xFrequency = uROS_TASK_DELAY_PUB / portTICK_PERIOD_MS;
     //dac.setVoltage(1, false);
       rcl_ret_t status;
       while (true) {

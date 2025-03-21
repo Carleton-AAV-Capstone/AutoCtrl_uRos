@@ -39,8 +39,8 @@ typedef struct curr_state_s {
 #define USER_SERIAL Serial
 #define CTRL_SERIAL Serial2
 
-#define RX_PIN_1 4
-#define TX_PIN_1 5
+#define RX_PIN_1 RX1
+#define TX_PIN_1 TX1
 
 //#define RX_PIN_1 3
 //#define TX_PIN_1 1
