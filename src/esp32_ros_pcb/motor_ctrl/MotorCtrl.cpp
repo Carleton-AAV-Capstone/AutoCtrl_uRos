@@ -12,15 +12,31 @@
 
 void writeDAC(uint16_t value) {
     value &= 0x3FF;  // Ensure value is 10-bit (0-1023)
-
+    USER_SERIAL.print("Writing DAC value: ");
+    USER_SERIAL.println(value);
     //if (xSemaphoreTake(i2cSemaphore, pdMS_TO_TICKS(100)) == pdTRUE) {
-        Wire.beginTransmission(DAC_ADDR);
-        Wire.write(value >> 2);          // D9-D2
-        Wire.write((value & 0x03) << 6); // D1-D0 in bits 7-6
-        if (Wire.endTransmission() != 0) {
-            USER_SERIAL.println("ERROR: DAC did not acknowledge!");
-        }
-        
+        uint16_t twoByte = (value ) & 0x0FFF; // Bits D9–D2 in upper byte
+    
+    uint8_t upperByte = value >> 6;
+    uint8_t lowerByte = twoByte;
+
+    // Begin I2C transmission to the DAC (R/W bit = 0 implied by Wire library)
+    Wire.beginTransmission(DAC_ADDR_A0_GND);
+
+    // Send the upper data byte (D9–D2), DAC should ACK
+    Wire.write(upperByte);
+
+    // Send the lower data byte (D1–D0), DAC should ACK
+    Wire.write(lowerByte);
+
+    
+    
+    // End transmissionand check for errors
+ 
+    if (Wire.endTransmission() != 0) {
+        USER_SERIAL.println("ERROR: DAC did not acknowledge!");
+    }
+        delay(1);
        // xSemaphoreGive(i2cSemaphore);
      
 }

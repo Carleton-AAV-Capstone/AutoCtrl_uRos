@@ -5,8 +5,9 @@
 
 
 
-#define STEER_ID 0x01
-#define BRAKE_ID 0x02
+#define STEER_ID 0x11
+#define BRAKE_ID 0x12
+
 
 #define BRAKE_MAX 4095
 #define DAC_ADDR_A0_FLOAT  0x48  // If A0 is floating

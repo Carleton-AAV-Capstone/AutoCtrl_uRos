@@ -10,8 +10,8 @@ bool ros_enabled = true;
 bool ackermann_recv;
 CurrState curr_state = CurrState();
 
-JrkG2I2C jrk_steer(0x01);
-JrkG2I2C jrk_brake(0x02);
+JrkG2I2C jrk_steer(STEER_ID);
+JrkG2I2C jrk_brake(BRAKE_ID);
 
 
 ackermann_msgs__msg__AckermannDrive msg_ackermann;

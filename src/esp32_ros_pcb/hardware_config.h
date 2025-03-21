@@ -44,6 +44,9 @@ typedef struct curr_state_s {
 #define RX_PIN_1 RX1
 #define TX_PIN_1 TX1
 
+#define STEER_ID 0x5
+#define BRAKE_ID 0x4
+
 
 
 

@@ -28,7 +28,7 @@ void throttle_callback_ackermann(const void * msgin) {
       // Process control input based on the source (message or RC input)      
       if (msg->acceleration > 0) {
           digitalWrite(DIR_PIN, LOW);          
-          accelMag = (uint16_t) msg->acceleration;
+          accelMag = (uint16_t) map(msg->acceleration, 0, 2000, 0, 1023);
           dir = true;
       } else {
           digitalWrite(DIR_PIN, HIGH);    
@@ -42,10 +42,11 @@ void throttle_callback_ackermann(const void * msgin) {
       jrk_steer.setTarget(map((long) msg->steering_angle, STEER_READ_MIN, STEER_READ_MAX, 0, 4095));
       // Apply control logic
       if (!dir) { // Moving forward
+        jrk_brake.setTarget(0);
         USER_SERIAL.print("ACCEL_SETPOINT: ");
         USER_SERIAL.println(accelMag);
         writeDAC((uint16_t) accelMag);
-        jrk_brake.setTarget(0);
+        
       } else { // Applying braking force
         USER_SERIAL.print("BRAKING_SETPOINT: ");
         writeDAC((uint16_t) 0);
