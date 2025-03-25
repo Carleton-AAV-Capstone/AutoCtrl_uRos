@@ -60,7 +60,7 @@ int uRos_init_serial_node_ackermann(uRos_s *uRosStruct, rclc_subscription_callba
         USER_SERIAL.println("Failed to initialize support");
         return status;
     }
-    status = rclc_node_init_default(&uRosStruct->node, nodeName, "", &uRosStruct->support);
+    status = rclc_node_init_default(&uRosStruct->node, nodeName, "auto_node", &uRosStruct->support);
     if(status != RCL_RET_OK){
         USER_SERIAL.println("Failed to initialize node");
         return status;
@@ -149,7 +149,7 @@ void microROS_Task_pub(void* parameter) {
           }else{
             USER_SERIAL.println("Sync success");
           }
-          
+
         vTaskDelayUntil(&xLastWakeTime, xFrequency); // Wait until next cycle
       }
   }

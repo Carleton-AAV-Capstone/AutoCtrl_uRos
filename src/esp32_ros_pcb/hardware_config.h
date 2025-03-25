@@ -50,8 +50,8 @@ typedef struct curr_state_s {
 
 
 
-#define STEER_READ_MAX 100//double check this
-#define STEER_READ_MIN 0
+#define STEER_READ_MAX 2000//double check this
+#define STEER_READ_MIN -2000
 #define STEER_READ_DEFAULT 50
 
 

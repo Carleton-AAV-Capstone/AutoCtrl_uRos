@@ -28,7 +28,7 @@ void throttle_callback_ackermann(const void * msgin) {
       // Process control input based on the source (message or RC input)      
       if (msg->acceleration > 0) {
           digitalWrite(DIR_PIN, LOW);          
-          accelMag = (uint16_t) map(msg->acceleration, 0, 2000, 0, 1023);
+          accelMag = (uint16_t) map(msg->acceleration, 0, 2000, 0, 4095);
           dir = true;
       } else {
           digitalWrite(DIR_PIN, HIGH);    
