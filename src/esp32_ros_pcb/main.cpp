@@ -50,7 +50,8 @@ void setup() {
 #endif
 #ifdef TRANSPORT_SERIAL
       USER_SERIAL.println("Initializing serial node");
-    while(uRos_init_serial_node_ackermann(&testSetup, &throttle_callback_ackermann, &msg_ackermann, "micro_ros_arduino_wifi_node_car", "/driveData", "/ackermannPub") != 0){
+      //while(uRos_init_serial_node_ackermann(&testSetup, &throttle_callback_ackermann, &msg_ackermann, "micro_ros_arduino_wifi_node_car", "/carla/ego_vehicle/ackermann_control/control_info", "/carla/ego_vehicle/ackermann_cmd") != 0){
+      while(uRos_init_serial_node_ackermann(&testSetup, &throttle_callback_ackermann, &msg_ackermann, "micro_ros_arduino_wifi_node_car", "/driveData", "/carla/ego_vehicle/ackermann_cmd") != 0){
       USER_SERIAL.println("Failed to initialize serial node");
     }
     USER_SERIAL.println("Serial node initialized");

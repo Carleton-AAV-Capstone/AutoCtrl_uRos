@@ -48,7 +48,7 @@ void hardware_setup(){
 
 // Function to read a channel and map its value to a given range
 int readChannel(int channelInput, int minLimit, int maxLimit, int defaultValue) {
-    int ch = pulseIn(channelInput, HIGH, 100); // Read PWM signal
+    int ch = pulseIn(channelInput, HIGH, 1000); // Read PWM signal
     if (ch < 990) return defaultValue; // Default value if signal is invalid
     return map(ch, 1000, 2000, minLimit, maxLimit);
 }

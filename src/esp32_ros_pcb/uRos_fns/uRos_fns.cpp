@@ -109,6 +109,8 @@ void microROS_Task_sub(void* parameter) {
     while (true) {
         //USER_SERIAL.println("braketask");
         bool rc = !readSwitch(USE_RC, false);
+        USER_SERIAL.print("RC: ");
+        USER_SERIAL.println(readChannel(USE_RC, 0, 100, 100));
         delay(1);
         if(!readSwitch(USE_RC, false) && rc){
             USER_SERIAL.println("uROS TASK");
@@ -127,7 +129,7 @@ void microROS_Task_sub(void* parameter) {
     }
 }
 
-
+extern JrkG2I2C jrk_steer;
 void microROS_Task_pub(void* parameter) {
     
     TickType_t xLastWakeTime = xTaskGetTickCount();
@@ -136,19 +138,22 @@ void microROS_Task_pub(void* parameter) {
       rcl_ret_t status;
       while (true) {
         ackermann_msgs__msg__AckermannDrive msg_sub;
-
+        
         ackermann_recv = false;
-        msg_sub.steering_angle = curr_state.steer_angle;
-        msg_sub.acceleration = curr_state.accel;
+        msg_sub.steering_angle = (float) map((long)jrk_steer.getScaledFeedback(), 0, 4095, 100, -100)/100.0;
+        USER_SERIAL.print("Steering angle carla: ");
+        USER_SERIAL.println(msg_sub.steering_angle);
+        msg_sub.acceleration = 1;
+        msg_sub.speed = curr_state.accel/2000;
         
         status = rcl_publish(&testSetup.publisher_1, &msg_sub, NULL);
         USER_SERIAL.println("PUBLISHED");
 
-        if(rmw_uros_sync_session(1000)){
-            USER_SERIAL.println("Sync failed");
-          }else{
-            USER_SERIAL.println("Sync success");
-          }
+        // if(rmw_uros_sync_session(1000)){
+        //     USER_SERIAL.println("Sync failed");
+        //   }else{
+        //     USER_SERIAL.println("Sync success");
+        //   }
 
         vTaskDelayUntil(&xLastWakeTime, xFrequency); // Wait until next cycle
       }
