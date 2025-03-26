@@ -23,6 +23,11 @@ typedef struct curr_state_s {
 #define REV_EN 0
 #define THR_RC 33
 #define STR_RC 35
+#define RC_MAX 990
+#define RC_INPUT_MIN_MAP 1000
+#define RC_INPUT_MAX_MAP 2000
+#define RC_SW_MIN_LIM 0
+#define RC_SW_MAX_LIM 100
 
 #define DRIVER_ERROR_PIN 32
 

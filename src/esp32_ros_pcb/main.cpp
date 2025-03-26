@@ -6,7 +6,8 @@
 // #include "hardware_config.h"
 
 bool ros_enabled = true;
-
+volatile rmt_obj_t *rmtObj;
+volatile uint32_t pulse_width = 0;    // Shared variable for pulse width
 bool ackermann_recv;
 CurrState curr_state = CurrState();
 
