@@ -30,6 +30,8 @@ typedef struct curr_state_s {
 #define LED_PIN 2
 
 
+#define EXT_GPIO_ADDR 0x20
+
 #define I2C_SDA 23
 #define I2C_SCL 22
 
@@ -81,4 +83,7 @@ typedef struct curr_state_s {
 void hardware_setup();
 int readChannel(int channelInput, int minLimit, int maxLimit, int defaultValue);
 bool readSwitch(byte channelInput, bool defaultValue);
+
+void ext_digitalWrite(uint8_t pin, bool value);
+void ext_pinMode(uint8_t pin, bool isOutput);
 #endif

@@ -59,3 +59,54 @@ bool readSwitch(byte channelInput, bool defaultValue){
   int ch = readChannel(channelInput, 0, 100, intDefaultValue);
   return (ch > 50);
 }
+
+// Function to configure a pin as output
+void ext_pinMode(uint8_t pin, bool isOutput) {
+    uint8_t reg = (pin < 8) ? 0x06 : 0x07;  // Config reg for Port 0 or Port 1
+    uint8_t bit = pin % 8;
+
+    Wire.beginTransmission(EXT_GPIO_ADDR);
+    Wire.write(reg);
+    Wire.endTransmission();
+
+    Wire.requestFrom(EXT_GPIO_ADDR, 1);
+    uint8_t config = Wire.read();
+
+    if (isOutput) {
+        config &= ~(1 << bit); // Set as output (0 = output)
+    } else {
+        config |= (1 << bit); // Set as input (1 = input)
+    }
+
+    Wire.beginTransmission(EXT_GPIO_ADDR);
+    Wire.write(reg);
+    Wire.write(config);
+    Wire.endTransmission();
+}
+
+// Function to write a digital value to a pin
+void ext_digitalWrite(uint8_t pin, bool value) {
+    uint8_t reg = (pin < 8) ? 0x02 : 0x03;  // Output reg for Port 0 or Port 1
+    uint8_t bit = pin % 8;
+
+    // Read the current output state
+    Wire.beginTransmission(EXT_GPIO_ADDR);
+    Wire.write(reg);
+    Wire.endTransmission();
+
+    Wire.requestFrom(EXT_GPIO_ADDR, 1);
+    uint8_t portState = Wire.read();
+
+    // Update only the desired pin
+    if (value) {
+        portState |= (1 << bit);
+    } else {
+        portState &= ~(1 << bit);
+    }
+
+    // Write the updated state back to the PCA9555D
+    Wire.beginTransmission(EXT_GPIO_ADDR);
+    Wire.write(reg);
+    Wire.write(portState);
+    Wire.endTransmission();
+}

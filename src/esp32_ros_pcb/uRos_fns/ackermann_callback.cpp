@@ -1,5 +1,6 @@
 #include "uRos_fns.h"
 #include "../motor_ctrl/MotorCtrl.h"
+
 extern CurrState curr_state;
 extern JrkG2I2C jrk_steer;
 extern JrkG2I2C jrk_brake;
@@ -27,11 +28,11 @@ void throttle_callback_ackermann(const void * msgin) {
 
       // Process control input based on the source (message or RC input)      
       if (msg->acceleration > 0) {
-          digitalWrite(DIR_PIN, LOW);          
+          ext_digitalWrite(DIR_PIN, LOW);          
           accelMag = (uint16_t) map(msg->acceleration, 0, 2000, 0, 1023);
           dir = true;
       } else {
-          digitalWrite(DIR_PIN, HIGH);    
+          ext_digitalWrite(DIR_PIN, HIGH);    
           accelMag = (uint16_t)(-msg->acceleration);
           dir = false;
       }
