@@ -24,7 +24,7 @@ void hardware_setup(){
     // pinMode(DIR_PIN, OUTPUT);
 
     
-    ibus.begin(IBUS_SERIAL);//Initialising IBUS pin
+    ibus.begin(IBUS_SERIAL, IBUSBM_NOTIMER, 32, 33);//Initialising IBUS pin
 
     bool begin = false;
     while(!begin){
@@ -52,7 +52,10 @@ void hardware_setup(){
 
 // Function to read a channel and map its value to a given range
 int readChannel(byte channelInput, int minLimit, int maxLimit, int defaultValue) {
+  ibus.loop();
   uint16_t ch = ibus.readChannel(channelInput);
+  USER_SERIAL.print("Channel ");
+    USER_SERIAL.print(channelInput);
   if (ch < 100) return defaultValue;
   return map(ch, 1000, 2000, minLimit, maxLimit);
 }
