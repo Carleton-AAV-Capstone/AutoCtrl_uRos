@@ -11,14 +11,18 @@
 //extern SemaphoreHandle_t i2cSemaphore;
 
 void writeDAC(uint16_t value) {
+    USER_SERIAL.print("DAC input: ");
+    USER_SERIAL.println(value);
     value &= 0x3FF;  // Ensure value is 10-bit (0-1023)
     USER_SERIAL.print("Writing DAC value: ");
     USER_SERIAL.println(value);
     //if (xSemaphoreTake(i2cSemaphore, pdMS_TO_TICKS(100)) == pdTRUE) {
-        uint16_t twoByte = (value ) & 0x0FFF; // Bits D9–D2 in upper byte
+    uint16_t twoByte = (value ) & 0x0FFF; // Bits D9–D2 in upper byte
     
-    uint8_t upperByte = value >> 6;
-    uint8_t lowerByte = twoByte;
+    // uint8_t upperByte = value >> 4;
+    // uint8_t lowerByte = (uint8_t) twoByte;
+    uint8_t upperByte = (value >> 6) & 0x0F;  // Upper 4 bits of the 10-bit value
+    uint8_t lowerByte = (value << 2) & 0xFC;  // Lower 6 bits left-aligned
 
     // Begin I2C transmission to the DAC (R/W bit = 0 implied by Wire library)
     Wire.beginTransmission(DAC_ADDR_A0_GND);
