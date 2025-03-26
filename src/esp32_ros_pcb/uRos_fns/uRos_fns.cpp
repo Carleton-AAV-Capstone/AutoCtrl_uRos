@@ -122,9 +122,9 @@ void microROS_Task_sub(void* parameter) {
             RC_Control();
         }
 
-        if(digitalRead(DRIVER_ERROR_PIN)){
-                USER_SERIAL.println("DRIVER ERROR");
-            }
+        // if(digitalRead(DRIVER_ERROR_PIN)){
+        //         USER_SERIAL.println("DRIVER ERROR");
+        //     }
         vTaskDelayUntil(&xLastWakeTime, xFrequency); // Wait until next cycle
     }
 }

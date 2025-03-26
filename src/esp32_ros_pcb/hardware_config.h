@@ -30,7 +30,7 @@ typedef struct curr_state_s {
 #define LED_PIN 2
 
 
-#define EXT_GPIO_ADDR 0x20
+#define EXT_GPIO_ADDR 0x40
 
 #define I2C_SDA 23
 #define I2C_SCL 22
