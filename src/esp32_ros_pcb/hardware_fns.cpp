@@ -1,5 +1,6 @@
 #include "hardware_config.h"
 #include "./motor_ctrl/MotorCtrl.h"
+#include <IBusBM.h>
 // #include "hardware_fns.h"
 // #include "../SteeringBraking/MotorCtrl.h"
 
@@ -14,13 +15,16 @@ void hardware_setup(){
     digitalWrite(RED_LED_PIN, HIGH);
     digitalWrite(GREEN_LED_PIN, HIGH);
 
-    pinMode(USE_RC, INPUT_PULLUP);
-    pinMode(REV_EN, INPUT);
-    pinMode(THR_RC, INPUT);
-    pinMode(STR_RC, INPUT);
+    // pinMode(USE_RC, INPUT_PULLUP);
+    // pinMode(REV_EN, INPUT);
+    // pinMode(THR_RC, INPUT);
+    // pinMode(STR_RC, INPUT);
 
-    pinMode(LED_PIN, OUTPUT);
-    pinMode(DIR_PIN, OUTPUT);
+    // pinMode(LED_PIN, OUTPUT);
+    // pinMode(DIR_PIN, OUTPUT);
+
+    IBusBM ibus;
+    ibus.begin(IBUS_SERIAL);//Initialising IBUS pin
 
     bool begin = false;
     while(!begin){
@@ -47,15 +51,15 @@ void hardware_setup(){
 
 
 // Function to read a channel and map its value to a given range
-int readChannel(int channelInput, int minLimit, int maxLimit, int defaultValue) {
-    int ch = pulseIn(channelInput, HIGH, 1000); // Read PWM signal
-    if (ch < 990) return defaultValue; // Default value if signal is invalid
-    return map(ch, 1000, 2000, minLimit, maxLimit);
+int readChannel(byte channelInput, int minLimit, int maxLimit, int defaultValue) {
+  uint16_t ch = ibus.readChannel(channelInput);
+  if (ch < 100) return defaultValue;
+  return map(ch, 1000, 2000, minLimit, maxLimit);
 }
 
 // Read the switch channel and return a boolean value
-bool readSwitch(byte channelInput, bool defaultValue){
-  int intDefaultValue = (defaultValue)? 100: 0;
+bool readSwitch(byte channelInput, bool defaultValue) {
+  int intDefaultValue = (defaultValue) ? 100 : 0;
   int ch = readChannel(channelInput, 0, 100, intDefaultValue);
   return (ch > 50);
 }

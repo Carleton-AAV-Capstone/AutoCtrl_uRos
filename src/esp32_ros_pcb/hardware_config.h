@@ -19,10 +19,13 @@ typedef struct curr_state_s {
 
 //from motor controllers back: 35, 34, 0, 23: steering, throttle rev_en, RC_EN
 
-#define USE_RC 32//make this a pulldown!!
-#define REV_EN 0
-#define THR_RC 33
-#define STR_RC 35
+//defined as channel numbers instead of pins with ibus configuration
+#define USE_RC 4//channel 5 //make this a pulldown!!
+#define REV_EN 5//channel 6
+#define THR_RC 2 //channel 3
+#define STR_RC 3 //channel 4
+
+#define IBUS_SERIAL 32
 
 #define DRIVER_ERROR_PIN 32
 
