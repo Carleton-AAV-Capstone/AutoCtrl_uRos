@@ -26,7 +26,7 @@ typedef struct curr_state_s {
 
 #define DRIVER_ERROR_PIN 32
 
-#define DIR_PIN 33
+#define DIR_PIN 0
 #define LED_PIN 2
 
 
