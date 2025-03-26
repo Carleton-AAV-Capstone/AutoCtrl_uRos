@@ -25,7 +25,7 @@ typedef struct curr_state_s {
 #define THR_RC 2 //channel 3
 #define STR_RC 3 //channel 4
 
-#define IBUS_SERIAL 32
+#define IBUS_SERIAL CTRL_SERIAL
 
 #define DRIVER_ERROR_PIN 32
 
@@ -82,6 +82,6 @@ typedef struct curr_state_s {
 
 
 void hardware_setup();
-int readChannel(int channelInput, int minLimit, int maxLimit, int defaultValue);
+int readChannel(byte channelInput, int minLimit, int maxLimit, int defaultValue);
 bool readSwitch(byte channelInput, bool defaultValue);
 #endif

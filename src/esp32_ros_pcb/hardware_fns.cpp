@@ -3,7 +3,7 @@
 #include <IBusBM.h>
 // #include "hardware_fns.h"
 // #include "../SteeringBraking/MotorCtrl.h"
-
+IBusBM ibus;
 void hardware_setup(){
     Wire.begin();
 
@@ -23,7 +23,7 @@ void hardware_setup(){
     // pinMode(LED_PIN, OUTPUT);
     // pinMode(DIR_PIN, OUTPUT);
 
-    IBusBM ibus;
+    
     ibus.begin(IBUS_SERIAL);//Initialising IBUS pin
 
     bool begin = false;
