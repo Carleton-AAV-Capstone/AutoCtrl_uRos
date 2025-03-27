@@ -3,8 +3,20 @@
 // #include "hardware_fns.h"
 // #include "../SteeringBraking/MotorCtrl.h"
 
+#include <PCA95x5.h>
+
+PCA9555 ioex;
+
+
+
 void hardware_setup(){
     Wire.begin();
+
+
+    ioex.attach(Wire);
+    ioex.polarity(PCA95x5::Polarity::ORIGINAL_ALL);
+    ioex.direction(PCA95x5::Direction::OUT_ALL);
+    ioex.write(PCA95x5::Level::L_ALL);
 
     pinMode(BLUE_LED_PIN, OUTPUT);
     pinMode(RED_LED_PIN, OUTPUT);
@@ -62,51 +74,19 @@ bool readSwitch(byte channelInput, bool defaultValue){
 
 // Function to configure a pin as output
 void ext_pinMode(uint8_t pin, bool isOutput) {
-    uint8_t reg = (pin < 8) ? 0x06 : 0x07;  // Config reg for Port 0 or Port 1
-    uint8_t bit = pin % 8;
-
-    Wire.beginTransmission(EXT_GPIO_ADDR);
-    Wire.write(reg);
-    Wire.endTransmission();
-
-    Wire.requestFrom(EXT_GPIO_ADDR, 1);
-    uint8_t config = Wire.read();
-
-    if (isOutput) {
-        config &= ~(1 << bit); // Set as output (0 = output)
-    } else {
-        config |= (1 << bit); // Set as input (1 = input)
+    if(isOutput){
+        ioex.direction(static_cast<PCA95x5::Port::Port>(pin), PCA95x5::Direction::OUT);
+    }else{
+        ioex.direction(static_cast<PCA95x5::Port::Port>(pin), PCA95x5::Direction::IN);
     }
-
-    Wire.beginTransmission(EXT_GPIO_ADDR);
-    Wire.write(reg);
-    Wire.write(config);
-    Wire.endTransmission();
 }
 
 // Function to write a digital value to a pin
 void ext_digitalWrite(uint8_t pin, bool value) {
-    uint8_t reg = (pin < 8) ? 0x02 : 0x03;  // Output reg for Port 0 or Port 1
-    uint8_t bit = pin % 8;
-
-    // Read the current output state
-    Wire.beginTransmission(EXT_GPIO_ADDR);
-    Wire.write(reg);
-    Wire.endTransmission();
-
-    Wire.requestFrom(EXT_GPIO_ADDR, 1);
-    uint8_t portState = Wire.read();
-
-    // Update only the desired pin
-    if (value) {
-        portState |= (1 << bit);
-    } else {
-        portState &= ~(1 << bit);
+    if(value){
+        ioex.write(static_cast<PCA95x5::Port::Port>(pin), PCA95x5::Level::H);
+    }else{
+        ioex.write(static_cast<PCA95x5::Port::Port>(pin), PCA95x5::Level::L);
     }
 
-    // Write the updated state back to the PCA9555D
-    Wire.beginTransmission(EXT_GPIO_ADDR);
-    Wire.write(reg);
-    Wire.write(portState);
-    Wire.endTransmission();
 }
