@@ -25,9 +25,9 @@ void RC_Control(){
   
     // Reverse enable check
      if (readSwitch(REV_EN, false)) {
-         digitalWrite(DIR_PIN, LOW);
+         ext_digitalWrite(DIR_PIN, LOW);
      } else {
-         digitalWrite(DIR_PIN, HIGH);
+         ext_digitalWrite(DIR_PIN, HIGH);
      }
   
     // Debugging output

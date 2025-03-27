@@ -17,7 +17,12 @@ void hardware_setup(){
     ioex.attach(Wire);
     ioex.polarity(PCA95x5::Polarity::ORIGINAL_ALL);
     ioex.direction(PCA95x5::Direction::OUT_ALL);
-    ioex.write(PCA95x5::Level::L_ALL);
+    ioex.write(PCA95x5::Level::H_ALL);
+    
+
+    //set ioex port 1 pin 2 and 3 high
+    // ioex.write(PCA95x5::Port::P15, PCA95x5::Level::H);
+    // ioex.write(PCA95x5::Port::P16, PCA95x5::Level::H);
 
     pinMode(BLUE_LED_PIN, OUTPUT);
     pinMode(RED_LED_PIN, OUTPUT);
