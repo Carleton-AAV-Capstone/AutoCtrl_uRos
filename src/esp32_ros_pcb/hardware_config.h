@@ -19,10 +19,13 @@ typedef struct curr_state_s {
 
 //from motor controllers back: 35, 34, 0, 23: steering, throttle rev_en, RC_EN
 
-#define USE_RC 32//make this a pulldown!!
-#define REV_EN 0
-#define THR_RC 33
-#define STR_RC 35
+//defined as channel numbers instead of pins with ibus configuration
+#define USE_RC 4//channel 5 //make this a pulldown!!
+#define REV_EN 5//channel 6
+#define THR_RC 2 //channel 3
+#define STR_RC 3 //channel 4
+
+#define IBUS_SERIAL CTRL_SERIAL
 
 #define DRIVER_ERROR_PIN 32
 
@@ -66,7 +69,7 @@ typedef struct curr_state_s {
 #define UROS_RX RX1
 
 #define uROS_TASK_DELAY_SUB 10 // const TickType_t xFrequency = uROS_TASK_DELAY / portTICK_PERIOD_MS;
-#define uROS_TASK_DELAY_PUB 10 // const TickType_t xFrequency = uROS_TASK_DELAY / portTICK_PERIOD_MS;
+#define uROS_TASK_DELAY_PUB 100 // const TickType_t xFrequency = uROS_TASK_DELAY / portTICK_PERIOD_MS;
 #define BRK_PID_TASK_DELAY 10 
 #define STR_PID_TASK_DELAY 10 
 
@@ -81,7 +84,7 @@ typedef struct curr_state_s {
 
 
 void hardware_setup();
-int readChannel(int channelInput, int minLimit, int maxLimit, int defaultValue);
+int readChannel(byte channelInput, int minLimit, int maxLimit, int defaultValue);
 bool readSwitch(byte channelInput, bool defaultValue);
 
 void ext_digitalWrite(uint8_t pin, bool value);

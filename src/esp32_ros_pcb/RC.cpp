@@ -7,15 +7,15 @@ extern JrkG2I2C jrk_brake;
 void RC_Control(){
     uint16_t accelMag;
     bool dir;
-    jrk_steer.setTarget((STR_RC, STEER_READ_MIN, STEER_READ_MAX, STEER_READ_DEFAULT));
+    jrk_steer.setTarget(readChannel(STR_RC, 4095, 0, STEER_READ_DEFAULT));
     USER_SERIAL.print("steer_rc: ");
     //USER_SERIAL.println(steer_vals.setpoint); 
     int accelMag_signed =  readChannel(THR_RC, ACCEL_READ_MIN, ACCEL_READ_MAX, ACCEL_READ_DEFAULT);
-    digitalWrite(LED_PIN, HIGH);
+    
   
     if (accelMag_signed > 0) {
-        digitalWrite(DIR_PIN, LOW);
-        digitalWrite(LED_PIN, LOW);
+        //digitalWrite(DIR_PIN, LOW);
+        
         accelMag = (uint16_t) accelMag_signed;
         dir = true;
     } else {
@@ -24,11 +24,11 @@ void RC_Control(){
     }
   
     // Reverse enable check
-    if (readSwitch(REV_EN, false)) {
-        digitalWrite(DIR_PIN, LOW);
-    } else {
-        digitalWrite(DIR_PIN, HIGH);
-    }
+     if (readSwitch(REV_EN, false)) {
+         digitalWrite(DIR_PIN, LOW);
+     } else {
+         digitalWrite(DIR_PIN, HIGH);
+     }
   
     // Debugging output
     USER_SERIAL.print("ACCEL MAG: ");
