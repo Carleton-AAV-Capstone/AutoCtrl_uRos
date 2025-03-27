@@ -15,7 +15,7 @@ void hardware_setup(){
     digitalWrite(RED_LED_PIN, HIGH);
     digitalWrite(GREEN_LED_PIN, HIGH);
 
-    // pinMode(USE_RC, INPUT_PULLUP);
+    //pinMode(USE_RC, INPUT);
     // pinMode(REV_EN, INPUT);
     // pinMode(THR_RC, INPUT);
     // pinMode(STR_RC, INPUT);
@@ -26,6 +26,7 @@ void hardware_setup(){
     
     ibus.begin(IBUS_SERIAL, IBUSBM_NOTIMER, 32, 33);//Initialising IBUS pin
 
+    
     bool begin = false;
     while(!begin){
         digitalWrite(RED_LED_PIN, LOW);
@@ -52,17 +53,23 @@ void hardware_setup(){
 
 // Function to read a channel and map its value to a given range
 int readChannel(byte channelInput, int minLimit, int maxLimit, int defaultValue) {
+  
   ibus.loop();
+
   uint16_t ch = ibus.readChannel(channelInput);
   USER_SERIAL.print("Channel ");
     USER_SERIAL.print(channelInput);
+    USER_SERIAL.print(" value: ");
+    USER_SERIAL.println(ch);
   if (ch < 100) return defaultValue;
   return map(ch, 1000, 2000, minLimit, maxLimit);
 }
 
 // Read the switch channel and return a boolean value
 bool readSwitch(byte channelInput, bool defaultValue) {
+
   int intDefaultValue = (defaultValue) ? 100 : 0;
   int ch = readChannel(channelInput, 0, 100, intDefaultValue);
+    
   return (ch > 50);
 }

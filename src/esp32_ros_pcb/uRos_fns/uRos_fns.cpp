@@ -111,7 +111,7 @@ void microROS_Task_sub(void* parameter) {
         bool rc = !readSwitch(USE_RC, false);
         USER_SERIAL.print("RC: ");
         USER_SERIAL.println(readChannel(USE_RC, 0, 100, 100));
-        delay(1);
+        vTaskDelay(10);
         if(!readSwitch(USE_RC, false) && rc){
             USER_SERIAL.println("uROS TASK");
             status = rclc_executor_spin_some(&testSetup.executor, RCL_MS_TO_NS(5));
@@ -122,9 +122,9 @@ void microROS_Task_sub(void* parameter) {
             RC_Control();
         }
 
-        if(digitalRead(DRIVER_ERROR_PIN)){
-                USER_SERIAL.println("DRIVER ERROR");
-            }
+        // if(digitalRead(DRIVER_ERROR_PIN)){
+        //         USER_SERIAL.println("DRIVER ERROR");
+        //     }
         vTaskDelayUntil(&xLastWakeTime, xFrequency); // Wait until next cycle
     }
 }
