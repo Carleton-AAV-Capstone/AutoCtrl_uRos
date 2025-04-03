@@ -38,8 +38,8 @@ void throttle_callback_ackermann(const void * msgin) {
       }
       
       // Map steering angle from input range to control range
-      // USER_SERIAL.print("steer_angle: ");
-      // USER_SERIAL.println(msg->steering_angle);
+      USER_SERIAL.print("steer_angle: ");
+      USER_SERIAL.println(msg->steering_angle);
       jrk_steer.setTarget(map((long) msg->steering_angle, STEER_READ_MIN, STEER_READ_MAX, 0, 4095));
       // Apply control logic
       if (!dir) { // Moving forward
@@ -60,4 +60,42 @@ void throttle_callback_ackermann(const void * msgin) {
       
     }
     digitalWrite(LED_PIN, LOW);
+}
+
+
+void GPS_callback(const void * msgin) {
+    const sensor_msgs__msg__NavSatFix * msg = (const sensor_msgs__msg__NavSatFix *)msgin;
+    
+    // Indicate message reception by setting pin 2 high
+    digitalWrite(LED_PIN, HIGH);
+    
+    // Ensure the message is valid
+    if (msg != NULL) {
+      USER_SERIAL.print("GPS: ");
+      USER_SERIAL.print(msg->latitude);
+      USER_SERIAL.print(", ");
+      USER_SERIAL.println(msg->longitude);
+    }
+    
+    
+    digitalWrite(LED_PIN, LOW);
+}
+
+
+void GPS_callback_vel(const void * msgin) {
+  const sensor_msgs__msg__NavSatFix * msg = (const sensor_msgs__msg__NavSatFix *)msgin;
+  
+  // Indicate message reception by setting pin 2 high
+  digitalWrite(LED_PIN, HIGH);
+  
+  // Ensure the message is valid
+  if (msg != NULL) {
+    USER_SERIAL.print("GPS: ");
+    USER_SERIAL.print(msg->latitude);
+    USER_SERIAL.print(", ");
+    USER_SERIAL.println(msg->longitude);
+  }
+  
+  
+  digitalWrite(LED_PIN, LOW);
 }

@@ -12,6 +12,7 @@ typedef struct curr_state_s {
     float steer_angle;
     float accel;
     bool dir;
+    bool manual;
 }CurrState;
 
 //rc pins
@@ -26,6 +27,8 @@ typedef struct curr_state_s {
 #define STR_RC 3 //channel 4
 
 #define IBUS_SERIAL CTRL_SERIAL
+#define IBUS_RX 32
+#define IBUS_TX 33
 
 #define DRIVER_ERROR_PIN 32
 
@@ -59,6 +62,7 @@ typedef struct curr_state_s {
 #define STEER_READ_MIN -2000
 #define STEER_READ_DEFAULT 50
 
+#define CLOCK_SYNC_TIME 30000 //30 seconds
 
 #define ACCEL_READ_MAX 2000
 #define ACCEL_READ_MIN -2000

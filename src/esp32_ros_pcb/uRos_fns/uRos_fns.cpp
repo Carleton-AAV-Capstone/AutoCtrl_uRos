@@ -47,49 +47,93 @@ int uRos_init_wireless_node_ackermann(uRos_s *uRosStruct, rclc_subscription_call
 #endif
 
 #ifdef TRANSPORT_SERIAL
-int uRos_init_serial_node_ackermann(uRos_s *uRosStruct, rclc_subscription_callback_t subscription_callback, ackermann_msgs__msg__AckermannDrive *msg, char *nodeName, char *topicName, char *pubTopicName){
-    rcl_ret_t status;
-    ROS_SERIAL.begin(UROS_BAUD, SERIAL_8N1, UROS_RX, UROS_TX);
-    set_microros_serial_transports(ROS_SERIAL);
-    
-    uRosStruct->allocator = rcl_get_default_allocator();
-    
-    status = rclc_support_init(&uRosStruct->support, 0, NULL, &uRosStruct->allocator);
+int uRos_init_serial_node_ackermann(uRos_s *uRosStruct, 
+    rclc_subscription_callback_t ackermann_callback, 
+    ackermann_msgs__msg__AckermannDrive *ackermann_msg, 
+    rclc_subscription_callback_t gps_callback,
+    sensor_msgs__msg__NavSatFix *gps_msg,
+    geometry_msgs__msg__TwistStamped *gps_twist,
+    rclc_subscription_callback_t gps_twist_callback,
+    char *nodeName, char *ackermannTopicName, 
+    char *pubTopicName, char *gpsTopicName, char *gps_twistTopicName) {
+rcl_ret_t status;
+ROS_SERIAL.begin(UROS_BAUD, SERIAL_8N1, UROS_RX, UROS_TX);
+set_microros_serial_transports(ROS_SERIAL);
 
-    if(status != RCL_RET_OK){
-        USER_SERIAL.println("Failed to initialize support");
-        return status;
-    }
-    status = rclc_node_init_default(&uRosStruct->node, nodeName, "auto_node", &uRosStruct->support);
-    if(status != RCL_RET_OK){
-        USER_SERIAL.println("Failed to initialize node");
-        return status;
-    }
-    
-    // Create subscriber
-    status = rclc_subscription_init_best_effort(&uRosStruct->subscriber_1, &uRosStruct->node, ROSIDL_GET_MSG_TYPE_SUPPORT(ackermann_msgs, msg, AckermannDrive), topicName);
-    if(status != RCL_RET_OK){
-        USER_SERIAL.println("Failed to initialize subscriber");
-        return status;
-    }
-    // Create publisher
-    status = rclc_publisher_init_default(&uRosStruct->publisher_1, &uRosStruct->node, ROSIDL_GET_MSG_TYPE_SUPPORT(ackermann_msgs, msg, AckermannDrive), pubTopicName);
-    if(status != RCL_RET_OK){
-        USER_SERIAL.println("Failed to initialize publisher");
-        return status;
-    }
-    // Create executor
-    status = rclc_executor_init(&uRosStruct->executor, &uRosStruct->support.context, 2, &uRosStruct->allocator);
-    if(status != RCL_RET_OK){
-        USER_SERIAL.println("Failed to initialize executor");
-        return status;
-    }
-    status = rclc_executor_add_subscription(&uRosStruct->executor, &uRosStruct->subscriber_1, msg, *subscription_callback, ON_NEW_DATA);
-    if(status != RCL_RET_OK){
-        USER_SERIAL.println("Failed to add subscription to executor");
-        return status;
-    }
+uRosStruct->allocator = rcl_get_default_allocator();
+
+status = rclc_support_init(&uRosStruct->support, 0, NULL, &uRosStruct->allocator);
+if (status != RCL_RET_OK) {
+USER_SERIAL.println("Failed to initialize support");
+return status;
+}
+
+status = rclc_node_init_default(&uRosStruct->node, nodeName, "auto_node", &uRosStruct->support);
+if (status != RCL_RET_OK) {
+USER_SERIAL.println("Failed to initialize node");
+return status;
+}
+
+// Create Ackermann subscriber
+status = rclc_subscription_init_best_effort(&uRosStruct->subscriber_1, &uRosStruct->node, 
+ROSIDL_GET_MSG_TYPE_SUPPORT(ackermann_msgs, msg, AckermannDrive), ackermannTopicName);
+if (status != RCL_RET_OK) {
+USER_SERIAL.println("Failed to initialize Ackermann subscriber");
+return status;
+}
+
+// Create GPS subscriber
+status = rclc_subscription_init_best_effort(&uRosStruct->subscriber_2, &uRosStruct->node, 
+ROSIDL_GET_MSG_TYPE_SUPPORT(sensor_msgs, msg, NavSatFix), gpsTopicName);
+if (status != RCL_RET_OK) {
+USER_SERIAL.println("Failed to initialize GPS subscriber");
+return status;
+}
+
+status = rclc_subscription_init_best_effort(&uRosStruct->subscriber_3, &uRosStruct->node, 
+    ROSIDL_GET_MSG_TYPE_SUPPORT(geometry_msgs, msg, TwistStamped), gps_twistTopicName);
+    if (status != RCL_RET_OK) {
+    USER_SERIAL.println("Failed to initialize GPS subscriber");
     return status;
+    }
+
+// Create Ackermann publisher
+status = rclc_publisher_init_default(&uRosStruct->publisher_1, &uRosStruct->node, 
+ROSIDL_GET_MSG_TYPE_SUPPORT(ackermann_msgs, msg, AckermannDrive), pubTopicName);
+if (status != RCL_RET_OK) {
+USER_SERIAL.println("Failed to initialize publisher");
+return status;
+}
+
+// Create executor
+status = rclc_executor_init(&uRosStruct->executor, &uRosStruct->support.context, 3, &uRosStruct->allocator);
+if (status != RCL_RET_OK) {
+USER_SERIAL.println("Failed to initialize executor");
+return status;
+}
+
+// Add Ackermann subscription to executor
+status = rclc_executor_add_subscription(&uRosStruct->executor, &uRosStruct->subscriber_1, ackermann_msg, *ackermann_callback, ON_NEW_DATA);
+if (status != RCL_RET_OK) {
+USER_SERIAL.println("Failed to add Ackermann subscription to executor");
+return status;
+}
+
+// Add GPS subscription to executor
+status = rclc_executor_add_subscription(&uRosStruct->executor, &uRosStruct->subscriber_2, gps_msg, *gps_callback, ON_NEW_DATA);
+if (status != RCL_RET_OK) {
+USER_SERIAL.println("Failed to add GPS subscription to executor");
+return status;
+}
+
+// Add GPS twist subscription to executor
+status = rclc_executor_add_subscription(&uRosStruct->executor, &uRosStruct->subscriber_3, gps_twist, *gps_twist_callback, ON_NEW_DATA);
+if (status != RCL_RET_OK) {
+USER_SERIAL.println("Failed to add GPS subscription to executor");
+return status;
+}
+
+return status;
 }
 #endif
 
@@ -149,15 +193,21 @@ void microROS_Task_pub(void* parameter) {
         status = rcl_publish(&testSetup.publisher_1, &msg_sub, NULL);
         USER_SERIAL.println("PUBLISHED");
 
-        if(rmw_uros_sync_session(1000)){
-            USER_SERIAL.println("Sync failed");
-          }else{
-            USER_SERIAL.println("Sync success");
-          }
+        
 
         vTaskDelayUntil(&xLastWakeTime, xFrequency); // Wait until next cycle
       }
   }
+
+
+void uROS_Clock_Sync(void* parameter) {
+    TickType_t xLastWakeTime = xTaskGetTickCount();
+    const TickType_t xFrequency = CLOCK_SYNC_TIME / portTICK_PERIOD_MS;
+    while (true) {
+        vTaskDelayUntil(&xLastWakeTime, xFrequency); // Wait until next cycle
+        rclc_executor_spin_some(&testSetup.executor, RCL_MS_TO_NS(5));
+    }
+}
 
 
 

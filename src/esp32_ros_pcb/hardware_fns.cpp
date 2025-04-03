@@ -7,46 +7,37 @@
 #include <PCA95x5.h>
 
 PCA9555 ioex;
+hw_timer_t *timer = NULL;
+volatile bool flag = false; // Flag to indicate the interrupt occurred
+
+void IRAM_ATTR ctrlTimer() {
+    flag = true; // Set flag inside ISR
+}
 
 
 IBusBM ibus;
 void hardware_setup(){
-    Wire.begin();
+    //start i2c
+    
+    
+
+    while(!Wire.begin()){
+        USER_SERIAL.println("I2C init failed");
+        delay(100);
+    }
 
 
     ioex.attach(Wire);
     ioex.polarity(PCA95x5::Polarity::ORIGINAL_ALL);
     ioex.direction(PCA95x5::Direction::OUT_ALL);
     ioex.write(PCA95x5::Level::H_ALL);
-    
 
-    //set ioex port 1 pin 2 and 3 high
-    // ioex.write(PCA95x5::Port::P15, PCA95x5::Level::H);
-    // ioex.write(PCA95x5::Port::P16, PCA95x5::Level::H);
-
-    pinMode(BLUE_LED_PIN, OUTPUT);
-    pinMode(RED_LED_PIN, OUTPUT);
-    pinMode(GREEN_LED_PIN, OUTPUT);
-
-    digitalWrite(BLUE_LED_PIN, HIGH);
-    digitalWrite(RED_LED_PIN, HIGH);
-    digitalWrite(GREEN_LED_PIN, HIGH);
-
-    //pinMode(USE_RC, INPUT);
-    // pinMode(REV_EN, INPUT);
-    // pinMode(THR_RC, INPUT);
-    // pinMode(STR_RC, INPUT);
-
-    // pinMode(LED_PIN, OUTPUT);
-    // pinMode(DIR_PIN, OUTPUT);
-
-    
-    ibus.begin(IBUS_SERIAL, IBUSBM_NOTIMER, 32, 33);//Initialising IBUS pin
+    ibus.begin(IBUS_SERIAL, IBUSBM_NOTIMER, IBUS_RX, IBUS_TX);//Initialising IBUS pin
 
     
     bool begin = false;
     while(!begin){
-        digitalWrite(RED_LED_PIN, LOW);
+
         delay(100);
         USER_SERIAL.println("CONNECTING TO DAC i2C");
         begin = detectDAC();
@@ -54,7 +45,7 @@ void hardware_setup(){
             USER_SERIAL.println("DAC CONNECTION FAIL");
         }
 
-        }
+    }
   
     writeDAC(0);
     delay(250);
@@ -63,7 +54,7 @@ void hardware_setup(){
     
 
     USER_SERIAL.println("DAC CONNECTION SUCCESS");
-    //ROS_SERIAL.begin(115200, SERIAL_8N1, RX_PIN_1, TX_PIN_1);
+
     
 }
 
