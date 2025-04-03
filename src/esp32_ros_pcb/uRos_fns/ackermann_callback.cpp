@@ -83,19 +83,21 @@ void GPS_callback(const void * msgin) {
 
 
 void GPS_callback_vel(const void * msgin) {
-  const sensor_msgs__msg__NavSatFix * msg = (const sensor_msgs__msg__NavSatFix *)msgin;
-  
-  // Indicate message reception by setting pin 2 high
-  digitalWrite(LED_PIN, HIGH);
+  const geometry_msgs__msg__TwistStamped * msg = (const geometry_msgs__msg__TwistStamped *)msgin;
   
   // Ensure the message is valid
   if (msg != NULL) {
-    USER_SERIAL.print("GPS: ");
-    USER_SERIAL.print(msg->latitude);
-    USER_SERIAL.print(", ");
-    USER_SERIAL.println(msg->longitude);
+    float vel_x = msg->twist.linear.x;
+    float vel_y = msg->twist.linear.y;
+    float vel_z = msg->twist.linear.z;
+    float vel_scalar = sqrt(vel_x * vel_x + vel_y * vel_y + vel_z * vel_z);
+    USER_SERIAL.print("GPS VEL: ");
+    curr_state.speed = vel_scalar;
+    curr_state.accel = vel_scalar - curr_state.speed;
+    USER_SERIAL.print("accel: ");
+    USER_SERIAL.println(curr_state.accel);
+
   }
   
-  
-  digitalWrite(LED_PIN, LOW);
+
 }
