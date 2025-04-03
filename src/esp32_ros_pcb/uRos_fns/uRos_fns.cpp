@@ -149,11 +149,11 @@ void microROS_Task_pub(void* parameter) {
         status = rcl_publish(&testSetup.publisher_1, &msg_sub, NULL);
         USER_SERIAL.println("PUBLISHED");
 
-        // if(rmw_uros_sync_session(1000)){
-        //     USER_SERIAL.println("Sync failed");
-        //   }else{
-        //     USER_SERIAL.println("Sync success");
-        //   }
+        if(rmw_uros_sync_session(1000)){
+            USER_SERIAL.println("Sync failed");
+          }else{
+            USER_SERIAL.println("Sync success");
+          }
 
         vTaskDelayUntil(&xLastWakeTime, xFrequency); // Wait until next cycle
       }
